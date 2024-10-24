@@ -1,10 +1,7 @@
 <?php
 require_once './app/model/products.model.php';
 require_once './app/model/abstract.model.php';
-require_once './app/view/products.view.php';
-require_once './app/controller/error.controller.php';
-require_once './app/controller/success.controller.php';
-
+require_once './app/view/view.php';
 class ProductsController
 {
     private $view;
@@ -15,10 +12,8 @@ class ProductsController
 
     public function __construct($res)
     {
-        $this->view = new ProductsView($res->user);
+        $this->view = new view();
         $this->model = new ProductsModel();
-        $this->error = new ErrorControler($res);
-       
     }
 
     public function showCategories()

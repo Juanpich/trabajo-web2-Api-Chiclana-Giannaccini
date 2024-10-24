@@ -15,3 +15,7 @@ Y una segunda tabla llamada orders, que se relaciona con la tabla producto a tra
 - Para poder realizar las modificaciones en las tablas se debe iniciar sesion, para ello el usuario registrado es:
 usuario: webadmin
 contraseña: admin
+# endpoint
+> **Nota:** /trabajo-web2-Api-Chiclana-Giannaccini/api/reviews?orderBy=score
+
+

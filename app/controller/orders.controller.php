@@ -1,21 +1,17 @@
-<!--Comentarios: para porder pasar el $res del error lo tuve que poner error en el constructor para que me funcionara-->
 <?php
 require_once './app/model/orders.model.php';
-require_once './app/view/orders.view.php';
+require_once './app/view/view.php';
 require_once './app/model/abstract.model.php';
 require_once './app/model/products.model.php';
-require_once './app/controller/error.controller.php';
-require_once './app/controller/success.controller.php';
+;
 class OrdersControlers{
     private $view;
     private $model;
     private $error;
   
     public function __construct($res){
-        $this->view = new OrdersView($res->user);
+        $this->view = new view();
         $this->model = new OrdersModel();
-        $this->error = new ErrorControler($res);
-        
     }
     public function showHome(){
         $orders = $this->model->getOrders();

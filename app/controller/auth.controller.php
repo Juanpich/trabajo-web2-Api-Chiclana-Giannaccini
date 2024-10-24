@@ -1,6 +1,6 @@
 <?php
 require_once './app/model/auth.model.php';
-require_once './app/view/auth.view.php';
+require_once './app/view/view.php';
 require_once './app/model/abstract.model.php';
 class AuthController {
     private $model;
@@ -8,7 +8,7 @@ class AuthController {
 
     public function __construct() {
         $this->model = new UserModel();
-        $this->view = new AuthView();
+        $this->view = new view();
     }
 
     public function showLogin() {
