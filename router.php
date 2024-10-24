@@ -9,6 +9,12 @@ $router->addRoute('reviews'  ,                 'GET',    'ReviewsController',   
 $router->addRoute('reviews/:id'  ,             'GET',    'ReviewsController',   'getReview');
 $router->addRoute('reviews'  ,                 'POST',   'ReviewsController',   'createReview');
 $router->addRoute('reviews/:id'  ,             'PUT',    'ReviewsController',   'updateReview');
-$router->addRoute('reviews/:id'  ,             'DELETE',  'ReviewsController',  'deleteReview');
+$router->addRoute('reviews/:id'  ,             'DELETE', 'ReviewsController',   'deleteReview');
+//ordenes
+$router->addRoute('orders'  ,                  'GET',    'OrdersControlers',    'getOrders');
+$router->addRoute('orders/:id'  ,              'GET',    'OrdersControlers',    'getOrder');
+$router->addRoute('orders'  ,                  'POST',   'OrdersControlers',    'createOrder');
+$router->addRoute('orders/:id'  ,              'PUT',    'OrdersControlers',    'updateOrder');
+$router->addRoute('orders/:id'  ,              'DELETE', 'OrdersControlers',    'deleteOrder');
 
 $router->route($_GET['resource'], $_SERVER['REQUEST_METHOD']);

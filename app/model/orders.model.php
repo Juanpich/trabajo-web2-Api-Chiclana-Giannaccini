@@ -5,10 +5,25 @@ class OrdersModel extends modelAbstract{
     public function __construct(){
         parent::__construct();   
     }
-    public function getOrders(){
-        $query = $this->db->prepare("SELECT * FROM orders");
+    public function getOrders($orderBy){
+        $sql = "SELECT * FROM orders";
+        if($orderBy){
+            switch($orderBy){
+                case "date":
+                    $sql .= " ORDER BY date";
+                    break;
+                case "total":
+                    $sql .= " ORDER BY total";
+                    break;
+                case "cant_products":
+                    $sql .= " ORDER BY cant_products";
+                    break;
+            }
+        }
+        $query = $this->db->prepare($sql);
         $query->execute();
-        return $query->fetchAll(PDO::FETCH_OBJ);
+        $orders = $query->fetchAll(PDO::FETCH_OBJ);
+        return $orders;
     }
     public function getOrder($id){
         $query = $this->db->prepare("SELECT * FROM orders WHERE id = ?");
@@ -23,8 +38,8 @@ class OrdersModel extends modelAbstract{
     
     public function updateOrder($id, $data){
         $query = $this->db->prepare("UPDATE orders SET id_product = ?, cant_products = ?, total = ?, date = ? WHERE  orders . id = ?");
-        $result = $query->execute([$data["id_product"], $data["cant_products"],  $data["total"], $data["date"], $id]);
-        return $result;
+        $query->execute([$data["id_product"], $data["cant_products"],  $data["total"], $data["date"], $id]);
+        return;
     }
     public function eraseOrder($id){
         $query = $this->db->prepare("DELETE FROM orders WHERE id = ?");
@@ -33,8 +48,9 @@ class OrdersModel extends modelAbstract{
     }
     public function createOrder($data){
         $query = $this->db->prepare("INSERT INTO orders (id_product, cant_products, total, date) VALUES (?, ?, ?, ?)");
-        $result = $query->execute([$data["id_product"], $data["cant_products"],  $data["total"], $data["date"]]);
-        return $result;
+        $query->execute([$data["id_product"], $data["cant_products"],  $data["total"], $data["date"]]);
+        $id = $this->db->lastInsertId();
+        return $id;
     }
 
     

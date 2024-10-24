@@ -15,7 +15,28 @@ Y una segunda tabla llamada orders, que se relaciona con la tabla producto a tra
 - Para poder realizar las modificaciones en las tablas se debe iniciar sesion, para ello el usuario registrado es:
 usuario: webadmin
 contraseña: admin
-# endpoint
-> **Nota:** /trabajo-web2-Api-Chiclana-Giannaccini/api/reviews?orderBy=score
+# A continuacion quedan cargados los endpoint para las diferentes tablas
+> **Nota:** Tabla reviews
+Metodo GET: /trabajo-web2-Api-Chiclana-Giannaccini/api/reviews 
+Se puede implementar el orden mediante las siguentes maneras: orderBy=score, orderBy=name, orderBy=id_product
+> **Nota:** Tabla orders
+Metodo GET: /trabajo-web2-Api-Chiclana-Giannaccini/api/orders
+Se puede implementar el orden mediante las siguentes maneras: orderBy=date, orderBy=total, orderBy=cant_products
+Metodo GET: /trabajo-web2-Api-Chiclana-Giannaccini/api/orders/:id
+Metodo DELETE: /trabajo-web2-Api-Chiclana-Giannaccini/api/orders/:id
+Metodo PUT: /trabajo-web2-Api-Chiclana-Giannaccini/api/orders/:id
+Metodo POST /trabajo-web2-Api-Chiclana-Giannaccini/api/orders
+Los campos que se pueden modificar o agregar son:
+ {
+    "id_product": ..,
+    "cant_products": ..,
+    "date": "yyyy-mm-dd"
+}
+> **Nota:** Tabla products
+
+
+
+
+
 
 

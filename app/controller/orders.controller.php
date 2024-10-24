@@ -3,134 +3,87 @@ require_once './app/model/orders.model.php';
 require_once './app/view/view.php';
 require_once './app/model/abstract.model.php';
 require_once './app/model/products.model.php';
-;
 class OrdersControlers{
     private $view;
     private $model;
     private $error;
   
-    public function __construct($res){
+    public function __construct(){
         $this->view = new view();
         $this->model = new OrdersModel();
     }
-    public function showHome(){
-        $orders = $this->model->getOrders();
-        $this->view->showOrders($orders);
-    }
-    public function viewOrder($id){
-        if($this->model->checkIDExists($id)){
-            $order = $this->model->getOrder($id);
-            $id_product = $order->id_product;
-            $controletProduct = new ProductsModel();
-            if($controletProduct->checkIDExists($id_product)){
-                $product = $controletProduct->getProduct($id_product);
-                if($product != null){
-                    $this->view->showOrder($order, $product);
-                }
-            }
-            
-        }else{
-            $error="No existe la orden y/o producto";
-            $redir="home";
-            $this->error->showError($error,$redir);
+    public function getOrders($req, $res){
+        $orderBy = false;
+        if(isset($req->query->orderBy)){
+            $orderBy = $req->query->orderBy;
         }
-    }
-    public function OrdersABM(){
-        $ordens = $this->model->getOrders();
-        $this->view->seeABMOrders($ordens);
-    }
-    public function deleteOrder($id){
-        if($this->model->checkIDExists($id)){
-            $result = $this->model->eraseOrder($id);
-            if($result)
-                header('Location: ' . BASE_URL . 'realizado');
-            else
-                $this->error->showError('Error en la base de datos', 'controlarOrdenes');
-            return;
-
-        }else{
-            $error = "El producto no existe";
-            $redir = "controlarOrdenes";
-            $this->error->showError($error,$redir);
+        $orders = $this->model->getOrders($orderBy);
+        if(!$orders){
+            return $this->view->showResult("Las ordenes no se pudieron conseguir", 404);
         }
+        return $this->view->showResult($orders, 200);
     }
-    public function showOrderForm($id = null){
-        $modelProducts = new ProductsModel();
-        $products = $modelProducts->getProducts();
-        if($id != null){
-            if($this->model->checkIDExists($id)){
-                $order = $this->model->getOrder($id);
-                $this->view->seeForm($order, $products);
-            }else{
-                $error = "El producto no existe";
-                $redir = "controlarOrdenes";
-                $this->error->showError($error,$redir);
-            }
-        }else{
-            $this->view->seeForm(null, $products);
+    public function getOrder($req, $res){
+        $id= $req->params->id;
+        if(!$this->model->checkIDExists($id)){
+            return $this->view->showResult("La orden con id=".$id." no existe", 404);
         }
-        
+        $order = $this->model->getOrder($id);
+        return  $this->view->showResult($order, 200);
+       
     }
-    private function checkFormData(){
-        if(isset($_POST['product']) && !empty($_POST['product']) && isset($_POST['cant_products']) && $_POST['cant_products'] > 0 && !empty($_POST['cant_products']) && isset($_POST['date']) && !empty($_POST['date'])){
-            $id_product = $_POST['product'];   
-            $cant_products = $_POST['cant_products'];
-            $date = $_POST['date'];
-            $modelProducts = new ProductsModel();
-            if($modelProducts->checkIDExists($id_product)){
-                $product = $modelProducts->getProduct($id_product);
-                $total = $product->price * $cant_products;
-                $data = array(
-                    "id_product"=>$id_product,
-                    "cant_products"=>$cant_products,
-                    "date"=>$date,
-                    "total"=>$total
-                );
-                return $data;
-            }else{
-                $error = "El producto no existe";
-                $redir = "controlarOrdenes";
-                $this->error->showError($error,$redir);
-                return;
-            }
-        }else{
-            $error = "Faltan completar campos";
-            $redir = "controlarOrdenes";
-            $this->error->showError($error,$redir);
-            return;
+    public function deleteOrder($req, $res){
+        $id =$req->params->id;
+        if(!$this->model->checkIDExists($id)){
+            return $this->view->showResult("La orden con id=".$id." no existe", 404);
         }
-    }
-    public function updateOrder($id){
-        if($this->model->checkIDExists($id)){
-            $data = $this->checkFormData();
-            if($data != null){
-                $result = $this->model->updateOrder($id, $data);
-                if($result)
-                    header('Location: ' . BASE_URL . 'realizado');
-                else
-                    $this->error->showError('Error en la base de datos', 'controlarOrdenes');
-                return;
-            }
-        }
-            $error = "La orden no existe";
-            $redir = "controlarOrdenes";
-            $this->error->showError($error,$redir);
-      
-    }
-    public function createOrder(){
-        $data = $this->checkFormData();
-        if($data != null){
-            $result = $this->model->createOrder($data);
-        }else{
-            $result = null;
-        }
+        $result = $this->model->eraseOrder($id);
         if($result)
-            header('Location: ' . BASE_URL . 'realizado');
+            return $this->view->showResult("La orden con id=".$id." se elimino con exito", 200);
         else
-            $this->error->showError('Error en la base de datos', 'controlarOrdenes');
-                
-        return;
+            return $this->view->showResult("La orden con id=".$id." no se pudo eliminar", 500);
     }
-    
-    
+    private function checkFormData($req){
+        if(empty($req->body->id_product) || empty($req->body->cant_products) || empty($req->body->date)){
+            return $this->view->showResult("Faltan completar campos", 400);
+        }
+        $id_product = $req->body->id_product;   
+        $modelProducts = new ProductsModel();
+        if(!$modelProducts->checkIDExists($id_product)){
+            return $this->view->showResult("El id=".$id_product." del producto no existe", 404);
+        }
+        $cant_products = $req->body->cant_products;
+        if($cant_products <=0){
+            return $this->view->showResult("ingrese datos validos", 400);
+        }
+        $date = $req->body->date;
+        $product = $modelProducts->getProduct($id_product);
+        $total = $product->price * $cant_products;
+        $data = array(
+            "id_product"=>$id_product,
+            "cant_products"=>$cant_products,
+            "date"=>$date,
+            "total"=>$total
+        );
+        return $data;
+    }
+    public function updateOrder($req, $res){
+        $id= $req->params->id;
+        if(!$this->model->checkIDExists($id)){
+            return $this->view->showResult("La orden con id=".$id." no existe", 404);
+        }
+        $data = $this->checkFormData($req);
+        $this->model->updateOrder($id, $data);
+        $order = $this->model->getOrder($id);
+        return $this->view->showResult($order,200);
+    }
+    public function createOrder($req, $res){
+        $data = $this->checkFormData($req);
+        $last_id = $this->model->createOrder($data);
+        if(!$last_id){
+            return $this->view->showResult("La orden no se pudo crear", 500);
+        }
+        $order = $this->model->getOrder($last_id);
+        return  $this->view->showResult($order, 201);
+    }
 }
