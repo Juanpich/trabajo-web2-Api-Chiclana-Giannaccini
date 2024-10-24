@@ -51,12 +51,8 @@ class ReviewsController{
         }
     }
     private function checkFormData($req){
-        var_dump($req->body);
         if(empty($req->body->id_product)||empty($req->body->client_name)||empty($req->body->score)|| empty($req->body->coment)){
-            $this->view->showResult("Faltan completar campos", 400);
-            return;
-            die();
-            
+            return  $this->view->showResult("Faltan completar campos", 400);         
         }
         $id_product = $req->body->id_product;
         $modelProducts = new ProductsModel();
@@ -86,6 +82,9 @@ class ReviewsController{
             return $this->view->showResult("El id=".$id." de la review no existe", 404);
         }
         $data = $this->checkFormData($req);
+        if($data ===null){
+            return; 
+        }
         $reply = null;
         if(isset($req->body->reply)){
             $reply = $req->body->reply;

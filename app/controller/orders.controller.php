@@ -73,12 +73,18 @@ class OrdersControlers{
             return $this->view->showResult("La orden con id=".$id." no existe", 404);
         }
         $data = $this->checkFormData($req);
+        if($data === null){
+            return;
+        }
         $this->model->updateOrder($id, $data);
         $order = $this->model->getOrder($id);
         return $this->view->showResult($order,200);
     }
     public function createOrder($req, $res){
         $data = $this->checkFormData($req);
+        if($data === null){
+            return;
+        }
         $last_id = $this->model->createOrder($data);
         if(!$last_id){
             return $this->view->showResult("La orden no se pudo crear", 500);

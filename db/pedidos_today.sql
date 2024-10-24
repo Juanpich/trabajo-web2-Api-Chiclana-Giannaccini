@@ -83,7 +83,7 @@ CREATE TABLE `review` (
   `client_name` varchar(100) NOT NULL,
   `score` int(11) NOT NULL,
   `coment` text NOT NULL,
-  `reply` text NOT NULL
+  `reply` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
