@@ -50,14 +50,14 @@ abstract class modelAbstract{
             $sql = <<<SQL
             CREATE TABLE `review` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
-            `id_product` int(11) NOT NULL,
+            `id_product` int(11) DEFAULT NULL,
             `client_name` varchar(100) NOT NULL,
             `score` int(11) NOT NULL,
             `coment` text NOT NULL,
-            `reply` text NOT NULL,
+            `reply` text DEFAULT NULL,
             PRIMARY KEY (`id`),
             KEY `id_product` (`id_product`),
-            CONSTRAINT `fk_product` FOREIGN KEY (`id_product`) REFERENCES `product` (`id`) ON DELETE CASCADE
+            CONSTRAINT `fk_review_product` FOREIGN KEY (`id_product`) REFERENCES `product` (`id`) ON DELETE CASCADE
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
             SQL;
             $this->db->query($sql);
@@ -91,7 +91,7 @@ abstract class modelAbstract{
     
             $insertSql = "INSERT INTO `orders` (`id`, `id_product`, `cant_products`, `total`, `date`) VALUES
                         (1, 1, 2, 6000.00, '2024-09-11'),
-                        (2, , 21, 3000.00, '2024-09-19'),
+                        (2, 2, 21, 3000.00, '2024-09-19'),
                         (5, 7, 3, 3000.00, '2024-09-12'),
                         (6, 1, 1, 3000.00, '2024-09-30');";
             $this->db->prepare($insertSql)->execute();
