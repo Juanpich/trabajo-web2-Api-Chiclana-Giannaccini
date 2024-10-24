@@ -34,9 +34,14 @@ Los campos que se pueden modificar o agregar son:
 }
 > **Nota:** Tabla products
 
+# endpoint   
+**Nota:**   
+>/trabajo-web2-Api-Chiclana-Giannaccini/api/reviews?orderBy=score  
+> Ej filtrar por dos campos: http://localhost/.../api/reviews?filter_reply=gracias&filter_name=juan  
 
-
-
-
-
+Filtros: orderBy = ordena;  
+         filter_name = filtra por nombre;  
+         filter_score = filtra por puntaje;  
+         filter_word = filtra por palabra en las reseñas;  
+         filter_reply = filtra por palabra en la las respuestas;
 
