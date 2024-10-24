@@ -15,7 +15,15 @@ Y una segunda tabla llamada orders, que se relaciona con la tabla producto a tra
 - Para poder realizar las modificaciones en las tablas se debe iniciar sesion, para ello el usuario registrado es:
 usuario: webadmin
 contraseña: admin
-# endpoint
-> **Nota:** /trabajo-web2-Api-Chiclana-Giannaccini/api/reviews?orderBy=score
 
+# endpoint   
+**Nota:**   
+>/trabajo-web2-Api-Chiclana-Giannaccini/api/reviews?orderBy=score  
+> Ej filtrar por dos campos: http://localhost/.../api/reviews?filter_reply=gracias&filter_name=juan  
+
+Filtros: orderBy = ordena;  
+         filter_name = filtra por nombre;  
+         filter_score = filtra por puntaje;  
+         filter_word = filtra por palabra en las reseñas;  
+         filter_reply = filtra por palabra en la las respuestas;
 
