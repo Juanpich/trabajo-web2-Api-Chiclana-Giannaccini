@@ -91,8 +91,8 @@ class ReviewsController{
             $reply = $req->body->reply;
         }
         $this->model->updateReview($id, $data, $reply);
-        //$review = $this->getReview($id); DESCOMENTAR DONDE MAJO TERMINE EL getReview
-        return $this->view->showResult("El id=".$id. " se modifico con exito", 200);
+        $review = $this->model->getReview($id);
+        return $this->view->showResult($review, 200);
     }
     public function getReview($req, $res){
         $id = $req->params->id;
