@@ -73,6 +73,11 @@ class ReviewsModel extends modelAbstract
         $review = $query->fetch(PDO::FETCH_OBJ);
         return $review;
     }
-    
+    public function createReview($data,$reply){
+        $query = $this->db->prepare('INSERT INTO review(id_product, client_name, score, coment) VALUES (?, ?, ?, ?)');
+        $query->execute([$data['id_product'], $data['client_name'], $data['score'], $data['coment']]);
+        $id = $this->db->lastInsertId();
+        return $id;
+    }
    
 }

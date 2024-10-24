@@ -50,14 +50,17 @@ class ReviewsController{
             return $this->view->showResult("Error al buscar las reviews: ", 500);
         }
     }
+
     private function checkFormData($req){
         if(empty($req->body->id_product)||empty($req->body->client_name)||empty($req->body->score)|| empty($req->body->coment)){
-            return  $this->view->showResult("Faltan completar campos", 400);         
+             $this->view->showResult("Faltan completar campos", 400);         
+             return null; 
         }
         $id_product = $req->body->id_product;
         $modelProducts = new ProductsModel();
         if(!$modelProducts->checkIDExists($id_product)){
-            return $this->view->showResult("El id=".$id_product." del producto no existe", 404);
+             $this->view->showResult("El id=".$id_product." del producto no existe", 404);
+             return null; 
         }
         $client_name = $req->body->client_name;
         $score = $req->body->score;
@@ -76,6 +79,8 @@ class ReviewsController{
         );
         return $data;
     }
+
+
     public function updateReview($req, $res){
         $id = $req->params->id;
         if(!$this->model->checkIDExists($id)){
@@ -93,6 +98,8 @@ class ReviewsController{
         $review = $this->model->getReview($id);
         return $this->view->showResult($review, 200);
     }
+
+
     public function getReview($req, $res){
         $id = $req->params->id;
         $review = $this->model->getReview($id);
@@ -102,6 +109,21 @@ class ReviewsController{
         return $this->view->showResult($review, 200);
     }
 
+     public function createReview($req, $res){
+        $reply = null;
+        $data = $this->checkFormData($req);
+        if($data ===null){
+            return; 
+        }
+        $id= $this->model->createReview($data, $reply);
+        if (!$id) {
+        return $this->view->showResult("Error al insertar tarea", 500);
+    }
+        $review = $this->model->getReview($id);
+        return $this->view->showResult($review, 200);
+    }
+   
+    }
     
-}
+
 

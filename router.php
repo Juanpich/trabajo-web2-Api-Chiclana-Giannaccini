@@ -16,5 +16,11 @@ $router->addRoute('orders/:id'  ,              'GET',    'OrdersControlers',    
 $router->addRoute('orders'  ,                  'POST',   'OrdersControlers',    'createOrder');
 $router->addRoute('orders/:id'  ,              'PUT',    'OrdersControlers',    'updateOrder');
 $router->addRoute('orders/:id'  ,              'DELETE', 'OrdersControlers',    'deleteOrder');
+//products
+$router->addRoute('products'  ,                 'GET',    'ProductsControlers',    'getproducts');
+$router->addRoute('products/:id'  ,             'GET',    'ProductsControlers',    'getProduct');
+$router->addRoute('products'  ,                 'POST',   'ProductsControlers',    'createProduct');
+$router->addRoute('products/:id'  ,             'PUT',    'ProductsControlers',    'updateProduct');
+$router->addRoute('products/:id'  ,             'DELETE', 'ProductsControlers',    'deleteProduct');
 
 $router->route($_GET['resource'], $_SERVER['REQUEST_METHOD']);
