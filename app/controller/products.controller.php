@@ -6,155 +6,119 @@ class ProductsController
 {
     private $view;
     private $model;
-    private $error;
    
-    
-
-    public function __construct($res)
+    public function __construct()
     {
         $this->view = new view();
         $this->model = new ProductsModel();
     }
 
-    public function showCategories()
-    {
-        $products = $this->model->getProducts();
-        $this->view->showProducts($products);
-    }
+    public function getProducts($req, $res){
+        $orderBy = false;
+        $filter_name = null;
+        $filter_price = null;
+        $filter_description = null;
+        $filter_img = null;
 
-    public function viewItemByCategories($id_product)
-    {
-        $productExists = $this->model->checkIDExists($id_product);
-        if (!$productExists) {
-            $error = "Esta categoría no existe";
-            $redir = 'categorias';
-            $this->error->showError($error, $redir);
-        } else {
-            $orders = $this->model->getOrdersByProductId($id_product);
-            $product = $this->model->getProduct($id_product);
-            if (count($orders) === 0) {
-                $error = "No hay órdenes para este producto";
-                $redir = "categorias";
-                $this->error->showError($error, $redir);
-            } else {
-                $this->view->showOrdersById($orders, $product);
-            }
+        if(isset($req->query->orderBy)){
+            $orderBy = $req->query->orderBy;
         }
-    }
-
-    //ABM
-    public function productsABM($result = null, $success = '')
-    {
-        $products = $this->model->getProducts();
-        $this->view->seeABMProducts($products, $result, $success);
-    }
-
-    public function addProduct()
-    {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $productData = $this->getValidatedProductData();
-
-            // Si la validación falla, manejar el error
-            if (!$productData) {
-                $error = "Error: completar todos los campos obligatorios";
-                $redir = "nuevoProducto";
-                $this->error->showError($error, $redir);
-            } else {
-                $result = $this->model->insertProduct($productData['name'], $productData['price'], $productData['description'], $productData['image_product']);
-                if($result)
-                header('Location: ' . BASE_URL . 'realizado');
-            else
-                $this->error->showError('Error en la base de datos', 'controlarProductos');
-            return;
+            if (isset($req->query->filter_name)) {
+                $filter_name = $req->query->filter_name;
             }
-        } else {
-            $this->view->addProduct();
+    
+            if (isset($req->query->filter_price)) {
+                $filter_price = $req->query->filter_price;
+            }
+    
+            if (isset($req->query->filter_description)) {
+                $filter_description = $req->query->filter_description;
+            }
+    
+            if (isset($req->query->filter_img)) {
+                $filter_img = $req->query->filter_img;
+            }
+            try {
+            $products = $this->model->getProducts($orderBy, $filter_name, $filter_price, $filter_description, $filter_img);
+            if(!$products){
+            return $this->view->showResult("Ningun producto coincide con lo buscado", 404);
         }
+        return $this->view->showResult($products, 200);
+    }   catch (Exception $e) {
+        return $this->view->showResult("Error al buscar los productos", 500);
+    }
     }
 
-    public function deleteProduct($id)
-    {
-        if($this->model->checkIDExists($id)){
-            $result = $this->model->eraseProduct($id);
-            if($result)
-            header('Location: ' . BASE_URL . 'realizado');
+    public function getProduct($req, $res){
+        $id= $req->params->id;
+        if(!$this->model->checkIDExists($id)){
+            return $this->view->showResult("El producto con id=".$id." no existe", 404);
+        }
+        $product = $this->model->getProduct($id);
+        return  $this->view->showResult($product, 200);
+       
+    }
+
+    public function deleteProduct($req, $res){
+        $id =$req->params->id;
+        if(!$this->model->checkIDExists($id)){
+            return $this->view->showResult("El producto con id=".$id." no existe", 404);
+        }
+        $result = $this->model->eraseProduct($id);
+        if($result)
+            return $this->view->showResult("El producto con id=".$id." se elimino con exito", 200);
         else
-            $this->error->showError('Error en la base de datos', 'controlarProductos');
-        return;
-        } else {
-            $error = "No existe el producto con el id=$id";
-            $redir = "controlarProductos";
-            $this->error->showError($error, $redir);
-        }
+            return $this->view->showResult("El producto con id=".$id." no se pudo eliminar", 500);
     }
 
-    public function updateProduct($id)
-    {
-        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-            $product = $this->model->getProduct($id);
-            if (!$product) {
-                $error = "No existe el producto con el id=$id";
-                $redir = "controlarProductos";
-                $this->error->showError($error, $redir);
-                return;
-            }
-            $this->view->showProductForm($product, true);
-        } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $productData = $this->getValidatedProductData();
-            if (!$productData) {
-                $error = "Error: completar todos los campos obligatorios";
-                $redir = "controlarProductos";
-                $this->error->showError($error, $redir);
-            } else {
-                // Actualizo el producto
-                $result = $this->model->updateProduct($id, $productData['name'], $productData['price'], $productData['description'], $productData['image_product']);
-                if($result)
-                header('Location: ' . BASE_URL . 'realizado');
-            else
-                $this->error->showError('Error en la base de datos', 'controlarProductos');
+    public function createProduct($req, $res){
+        $data = $this->getValidatedProductData($req);
+        if($data === null){
             return;
-            }
         }
+        $last_id = $this->model->createProduct($data);
+        if(!$last_id){
+            return $this->view->showResult("El producto no se pudo crear", 500);
+        }
+        $product = $this->model->getProduct($last_id);
+        return  $this->view->showResult($product, 201);
     }
-    private function getValidatedProductData()
+
+    
+    public function updateProduct($req, $res){
+        $id= $req->params->id;
+        if(!$this->model->checkIDExists($id)){
+            return $this->view->showResult("El producto con id=".$id." no existe", 404);
+        }
+        $productData = $this->getValidatedProductData($req);
+        if($productData=== null){
+            return;
+        }
+        $result = $this->model->updateProduct($id, $productData);
+        $order = $this->model->getProduct($id);
+        return $this->view->showResult($order,200);
+    }
+
+    private function getValidatedProductData($req)
     {
         // Verificar campos obligatorios
-        if (
-            !isset($_POST['name']) || empty($_POST['name']) ||
-            !isset($_POST['price']) || empty($_POST['price']) ||
-            !isset($_POST['description']) || empty($_POST['description'])
-        ) {
-            return false;
+        if (empty($req->body->name) || empty($req->body->price) || empty($req->body->description) ) {
+                return $this->view->showResult("Faltan completar campos", 400);
         }
+        $name=$req->body->name;
+        $price=$req->body->price;
+        $description=$req->body->description;
         $image_product = null;
-        if (!empty($_POST['image_product'])) {
-            $image_product = htmlspecialchars($_POST['image_product']);
-            if (!filter_var($image_product, FILTER_VALIDATE_URL)) {
-                return false;
-            }
+        if (isset($req->body->img_product)) {
+            $image_product = htmlspecialchars($req->body->img_product);
         }
-        // Si todos los datos son válidos, devolver un array con los datos
-        return [
-            'name' => htmlspecialchars($_POST['name']),
-            'price' => htmlspecialchars($_POST['price']),
-            'description' => htmlspecialchars($_POST['description']),
-            'image_product' => $image_product 
+        $data= [
+            'name' => htmlspecialchars($name),
+            'price' => htmlspecialchars($price),
+            'description' => htmlspecialchars($description),
+            'image_product' => htmlspecialchars($image_product) 
         ];
+        return $data;
     }
 
-    public function showProductForm($id = null)
-    {
-        if ($id != null) {
-            if ($this->model->checkIDExists($id)) {
-                $product = $this->model->getProduct($id);
-                $this->view->showProductForm($product, true);
-            } else {
-                $error = "El producto no existe";
-                $redir = "controlarOrdenes";
-                $this->error->showError($error, $redir);
-            }
-        } else {
-            $this->view->addProduct();
-        }
-    }
 }

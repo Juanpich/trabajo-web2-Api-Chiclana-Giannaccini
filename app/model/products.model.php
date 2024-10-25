@@ -5,9 +5,46 @@ class ProductsModel extends modelAbstract{
     public function __construct(){
         parent::__construct();    
     }
-    public function getProducts() {
-        $query = $this->db->prepare("SELECT * FROM product");
-        $query->execute();
+    public function getProducts($orderBy, $filter_name = null, $filter_price = null, $filter_description = null, $filter_img = null) {
+        $sql = "SELECT * FROM product";
+        $params = [];
+        $conditions = []; //para hacer mas de una consulta
+       
+        if ($filter_name != null) {
+            $conditions[] = 'name LIKE :name';
+            $params[':name'] = "%" . $filter_name . "%";
+        }
+        if ($filter_price != null) {
+            $conditions[] = 'price = :price';
+            $params[':price'] = $filter_price;
+        }
+        if ($filter_description != null) {
+            $conditions[] = 'description LIKE :description';
+            $params[':description'] = "%" . $filter_description . "%";
+        }
+        if ($filter_img != null) {
+            $conditions[] = 'img = :img';
+            $params[':img'] = $filter_img;
+        }
+        //para poder hacer mas de una consulta
+        if (count($conditions) > 0) {
+            $sql .= ' WHERE ' . implode(' AND ', $conditions);
+        }
+        if($orderBy){
+            switch($orderBy){
+                case "name":
+                    $sql .= " ORDER BY name";
+                    break;
+                case "price":
+                    $sql .= " ORDER BY price";
+                    break;
+                case "id":
+                    $sql .= " ORDER BY id";
+                    break;
+            }
+        }
+        $query = $this->db->prepare($sql);
+        $query->execute($params);
         return $query->fetchAll(PDO::FETCH_OBJ);
     }
     public function getProduct($id) {
@@ -22,17 +59,10 @@ class ProductsModel extends modelAbstract{
         return $query->fetchColumn() > 0;
     }
 
-    public function getOrdersByProductId($id_product){
-        $query = $this->db->prepare('SELECT * FROM orders WHERE id_product = ?');
-        $query->execute([$id_product]);
-        $orders = $query->fetchAll(PDO::FETCH_OBJ);
-        return $orders;
-    }
-
     //CRUD
-    public function insertProduct($name, $price, $description,$image_product){
+    public function createProduct($data){
         $query = $this->db->prepare('INSERT INTO product(name,price,description,image_product) VALUES (?, ?, ?, ?)');
-        $query->execute([$name,$price, $description, $image_product]);
+        $query->execute([$data['name'],$data['price'], $data['description'], $data['image_product']]);
         $id = $this->db->lastInsertId();
         return $id;
     }
@@ -43,15 +73,10 @@ class ProductsModel extends modelAbstract{
         return $result;
     }
 
-    public function updateProduct($id, $name, $price, $description, $image_product) {
+    public function updateProduct($id, $productData) {
         $query = $this->db->prepare('UPDATE product SET name = ?, price = ?, description = ?, image_product = ? WHERE id = ?');
-        $query->execute([$name, $price, $description,$image_product,$id]);
+        $query->execute([$productData['name'], $productData['price'], $productData['description'], $productData['image_product'],$id]);
                 return true; 
      } 
-
-
-     
-    
-    
 }
 
