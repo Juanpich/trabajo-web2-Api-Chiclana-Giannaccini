@@ -1,7 +1,7 @@
 # **Participantes:**
 -Maria Jose Giannaccini
 -Juan Pablo Chiclana Urraco
-![DIAGRAMA](image.png)  
+![DIAGRAMA](imagen_tablas.png)  
 
 # Descripcion:
 Elegimos realizar una pagina de pedidos en un local de comidas rapidas. Va a constar inicialmente de dos tablas: una llamada product, la cual contiene un id de tipo primary, auto incremental; un name, de tipo varchar; un price y una description del producto.
