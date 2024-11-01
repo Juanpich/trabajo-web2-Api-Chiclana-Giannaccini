@@ -9,30 +9,30 @@ class ReviewsModel extends modelAbstract
     {
         $sql = "SELECT * FROM review";
         $params = [];
-        $conditions = [];  // Array para acumular condiciones
-    
-        // Filtros usando los nombres correctos de las columnas
+        $conditions = [];  
+        
+        
         if ($filter_name != null) {
-            $conditions[] = 'client_name LIKE :name';
-            $params[':name'] = "%" . $filter_name . "%";
+            $conditions[] = 'client_name LIKE ?';
+            $params[] = "%" . $filter_name . "%";  
         }
         if ($filter_score != null) {
-            $conditions[] = 'score = :score';
-            $params[':score'] = $filter_score;
+            $conditions[] = 'score = ?';
+            $params[] = $filter_score;
         }
         if ($filter_coment != null) {
-            $conditions[] = 'coment LIKE :coment';
-            $params[':coment'] = "%" . $filter_coment . "%";
+            $conditions[] = 'coment LIKE ?';
+            $params[] = "%" . $filter_coment . "%";
         }
         if ($filter_reply != null) {
-            $conditions[] = 'reply LIKE :reply';
-            $params[':reply'] = "%" . $filter_reply . "%";
+            $conditions[] = 'reply LIKE ?';
+            $params[] = "%" . $filter_reply . "%";
         }
-
+        
+        // Construcción de la cláusula WHERE
         if (count($conditions) > 0) {
             $sql .= ' WHERE ' . implode(' AND ', $conditions);
         }
-        
         
         if ($orderBy) {
             switch ($orderBy) {
@@ -47,10 +47,11 @@ class ReviewsModel extends modelAbstract
                     break;
             }
         }
+        
         $query = $this->db->prepare($sql);
-        $query->execute($params);
+        $query->execute($params);  
         $reviews = $query->fetchAll(PDO::FETCH_OBJ);
-        return $reviews;
+        return $reviews;        
     }
     public function checkIDExists($id){
         $query = $this->db->prepare("SELECT * FROM review WHERE id = ?");
