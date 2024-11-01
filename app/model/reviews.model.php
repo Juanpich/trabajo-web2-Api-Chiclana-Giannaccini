@@ -5,7 +5,7 @@ class ReviewsModel extends modelAbstract
     {
         parent::__construct();
     }
-    public function getReviews($orderBy, $filter_name = null, $filter_score = null, $filter_coment = null, $filter_reply = null)
+    public function getReviews($orderBy, $order, $filter_name = null, $filter_score = null, $filter_coment = null, $filter_reply = null)
     {
         $sql = "SELECT * FROM review";
         $params = [];
@@ -46,6 +46,13 @@ class ReviewsModel extends modelAbstract
                     $sql .= " ORDER BY id_product";
                     break;
             }
+        }else{
+            $sql .= " ORDER BY id";
+        }
+        if($order === 'desc'){
+            $sql .= " DESC";
+        }else if($order === 'asc'){
+            $sql .= " ASC";
         }
         
         $query = $this->db->prepare($sql);

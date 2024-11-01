@@ -14,15 +14,19 @@ class ReviewsController{
     }
     public function getReviews($req, $res)
     {
+        $order = 'asc';
         $orderBy = false;
         $filter_name = null;
         $filter_score = null;
         $filter_coment = null;
         $filter_reply = null;
-
+        $orderValues = ['name', 'score','id_product'];
 
         if (isset($req->query->orderBy)) {
             $orderBy = $req->query->orderBy;
+            if(!in_array($orderBy, $orderValues)){
+                return $this->view->showResult("No se puede ordenar por el campo ingresado", 400);
+            }
         }
 
         if (isset($req->query->filter_name)) {
@@ -40,8 +44,14 @@ class ReviewsController{
         if (isset($req->query->filter_reply)) {
             $filter_reply = $req->query->filter_reply;
         }
+        if(isset($req->query->order)){
+            $order = $req->query->order;
+            if($order !== 'asc' && $order !== 'desc'){
+                return $this->view->showResult("No se puede ordenar de esa forma, ingrese asc o desc", 400);
+            }
+        }
         try {
-            $reviews = $this->model->getReviews($orderBy, $filter_name, $filter_score, $filter_coment, $filter_reply);
+            $reviews = $this->model->getReviews($orderBy, $order, $filter_name, $filter_score, $filter_coment, $filter_reply);
             if (empty($reviews)) {
                 return $this->view->showResult("Ninguna review coincide con lo buscado", 404);
             }
