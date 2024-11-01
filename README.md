@@ -18,11 +18,14 @@ contraseña: admin
 # A continuacion quedan cargados los endpoint para las diferentes tablas
 **Nota:** 
 >Tabla reviews
+
 Metodo GET: /trabajo-web2-Api-Chiclana-Giannaccini/api/reviews 
 Se puede implementar el orden mediante las siguentes maneras: orderBy=score, orderBy=name, orderBy=id_product, por defecto ordena por id.
 Se puede eleguir el orden: order=desc ó order=asc, por defecto ordena de forma asc.
+
 **Nota:** 
 >Tabla orders
+
 Metodo GET: /trabajo-web2-Api-Chiclana-Giannaccini/api/orders
 Se puede implementar el orden mediante las siguentes maneras: orderBy=date, orderBy=total, orderBy=cant_products, por defecto ordena por id.
 Se puede eleguir el orden: order=desc ó order=asc, por defecto ordena de forma asc.
@@ -42,6 +45,7 @@ Los campos que se pueden modificar o agregar son:
     "cant_products": ..,
     "date": "yyyy-mm-dd"
 }
+
 **Nota:** 
 >Tabla products
 
