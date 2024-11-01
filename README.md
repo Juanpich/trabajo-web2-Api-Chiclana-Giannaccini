@@ -21,7 +21,14 @@ Metodo GET: /trabajo-web2-Api-Chiclana-Giannaccini/api/reviews
 Se puede implementar el orden mediante las siguentes maneras: orderBy=score, orderBy=name, orderBy=id_product
 > **Nota:** Tabla orders
 Metodo GET: /trabajo-web2-Api-Chiclana-Giannaccini/api/orders
-Se puede implementar el orden mediante las siguentes maneras: orderBy=date, orderBy=total, orderBy=cant_products
+Se puede implementar el orden mediante las siguentes maneras: orderBy=date, orderBy=total, orderBy=cant_products, por defecto ordena por id.
+Se puede eleguir el orden: order=desc ó order=asc, por defecto ordena de forma asc.
+Se puede filtrar de las siguientes maneras: 
+-filter_total = (total =)
+-filter_cant_products=(cantidad =)
+-filter_date = (fecha = "yyyy-mm-dd")
+-filter_total_greater = (total >) 
+-filter_total_minor =(total <)
 Metodo GET: /trabajo-web2-Api-Chiclana-Giannaccini/api/orders/:id
 Metodo DELETE: /trabajo-web2-Api-Chiclana-Giannaccini/api/orders/:id
 Metodo PUT: /trabajo-web2-Api-Chiclana-Giannaccini/api/orders/:id

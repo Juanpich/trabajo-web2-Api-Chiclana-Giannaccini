@@ -14,10 +14,41 @@ class OrdersControlers{
     }
     public function getOrders($req, $res){
         $orderBy = false;
+        $order = 'asc';
+        $orderValues = ['cant_products', 'total','date'];
+        $filter_total = null;
+        $filter_cant_products = null;
+        $filter_date = null;
+        $filter_total_greater = null;
+        $filter_total_minor = null;
+        if(isset($req->query->filter_total)){
+            $filter_total = $req->query->filter_total;
+        }
+        if(isset($req->query->filter_cant_products)){
+            $filter_cant_products = $req->query->filter_cant_products;
+        }
+        if(isset($req->query->filter_date)){
+            $filter_date = $req->query->filter_date;
+        }
+        if(isset($req->query->filter_total_greater)){
+            $filter_total_greater = $req->query->filter_total_greater;
+        }
+        if(isset($req->query->filter_total_minor)){
+            $filter_total_minor = $req->query->filter_total_minor;
+        }
         if(isset($req->query->orderBy)){
             $orderBy = $req->query->orderBy;
+            if(!in_array($orderBy, $orderValues)){
+                return $this->view->showResult("No se puede ordenar por el campo ingresado", 400);
+            }
         }
-        $orders = $this->model->getOrders($orderBy);
+        if(isset($req->query->order)){
+            $order = $req->query->order;
+            if($order !== 'asc' && $order !== 'desc'){
+                return $this->view->showResult("No se puede ordenar de esa forma, ingrese asc o desc", 400);
+            }
+        }
+        $orders = $this->model->getOrders($orderBy, $order, $filter_total,$filter_cant_products,$filter_date,$filter_total_greater,$filter_total_minor);
         if(!$orders){
             return $this->view->showResult("Las ordenes no se pudieron conseguir", 404);
         }

@@ -5,8 +5,33 @@ class OrdersModel extends modelAbstract{
     public function __construct(){
         parent::__construct();   
     }
-    public function getOrders($orderBy){
+    public function getOrders($orderBy, $order, $filter_total,$filter_cant_products,$filter_date,$filter_total_greater,$filter_total_minor){
         $sql = "SELECT * FROM orders";
+        $params = [];
+        $conditions = []; 
+        if ($filter_total != null) {
+            $conditions[] = 'total = :total';
+            $params[':total'] = $filter_total;
+        }
+        if ($filter_cant_products != null) {
+            $conditions[] = 'cant_products = :cant_products';
+            $params[':cant_products'] = $filter_cant_products;
+        }
+        if ($filter_date != null) {
+            $conditions[] = 'date = :date';
+            $params[':date'] = $filter_date;
+        }
+        if ($filter_total_greater != null) {
+            $conditions[] = 'total > :total_greater';
+            $params[':total_greater'] = $filter_total_greater;
+        }
+        if ($filter_total_minor != null) {
+            $conditions[] = 'total < :total_minor';
+            $params[':total_minor'] = $filter_total_minor;
+        }
+        if (count($conditions) > 0) {
+            $sql .= ' WHERE ' . implode(' AND ', $conditions);
+        }
         if($orderBy){
             switch($orderBy){
                 case "date":
@@ -19,9 +44,16 @@ class OrdersModel extends modelAbstract{
                     $sql .= " ORDER BY cant_products";
                     break;
             }
+        }else{
+            $sql .= " ORDER BY id";
+        }
+        if($order === 'desc'){
+            $sql .= " DESC";
+        }else if($order === 'asc'){
+            $sql .= " ASC";
         }
         $query = $this->db->prepare($sql);
-        $query->execute();
+        $query->execute($params);
         $orders = $query->fetchAll(PDO::FETCH_OBJ);
         return $orders;
     }
