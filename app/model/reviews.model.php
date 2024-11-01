@@ -5,25 +5,35 @@ class ReviewsModel extends modelAbstract
     {
         parent::__construct();
     }
-    public function getReviews($orderBy, $filter_name = null, $filter_score = null, $filter_word = null, $filter_reply = null)
+    public function getReviews($orderBy, $filter_name = null, $filter_score = null, $filter_coment = null, $filter_reply = null)
     {
         $sql = "SELECT * FROM review";
         $params = [];
-       
+        $conditions = [];  // Array para acumular condiciones
+    
+        // Filtros usando los nombres correctos de las columnas
         if ($filter_name != null) {
-            $sql .= ' WHERE client_name LIKE :name';
+            $conditions[] = 'client_name LIKE :name';
             $params[':name'] = "%" . $filter_name . "%";
-        } if ($filter_score != null) {
-            $sql .=  ' WHERE score = :score' ;
+        }
+        if ($filter_score != null) {
+            $conditions[] = 'score = :score';
             $params[':score'] = $filter_score;
-        } if ($filter_word != null) {
-            $sql .=  ' WHERE coment LIKE :word';
-            $params[':word'] = "%" . $filter_word . "%";
-        } if ($filter_reply != null) {
-            $sql .=  ' WHERE reply LIKE :reply';
+        }
+        if ($filter_coment != null) {
+            $conditions[] = 'coment LIKE :coment';
+            $params[':coment'] = "%" . $filter_coment . "%";
+        }
+        if ($filter_reply != null) {
+            $conditions[] = 'reply LIKE :reply';
             $params[':reply'] = "%" . $filter_reply . "%";
         }
 
+        if (count($conditions) > 0) {
+            $sql .= ' WHERE ' . implode(' AND ', $conditions);
+        }
+        
+        
         if ($orderBy) {
             switch ($orderBy) {
                 case "name":

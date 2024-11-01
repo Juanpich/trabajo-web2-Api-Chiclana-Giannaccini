@@ -17,7 +17,7 @@ class ReviewsController{
         $orderBy = false;
         $filter_name = null;
         $filter_score = null;
-        $filter_word = null;
+        $filter_coment = null;
         $filter_reply = null;
 
 
@@ -33,21 +33,21 @@ class ReviewsController{
             $filter_score = $req->query->filter_score;
         }
 
-        if (isset($req->query->filter_word)) {
-            $filter_word = $req->query->filter_word;
+        if (isset($req->query->filter_coment)) {
+            $filter_coment = $req->query->filter_coment;
         }
 
         if (isset($req->query->filter_reply)) {
             $filter_reply = $req->query->filter_reply;
         }
         try {
-            $reviews = $this->model->getReviews($orderBy, $filter_name, $filter_score, $filter_word, $filter_reply);
+            $reviews = $this->model->getReviews($orderBy, $filter_name, $filter_score, $filter_coment, $filter_reply);
             if (empty($reviews)) {
                 return $this->view->showResult("Ninguna review coincide con lo buscado", 404);
             }
             return $this->view->showResult($reviews, 200);
         } catch (Exception $e) {
-            return $this->view->showResult("Error al buscar las reviews: ", 500);
+            return $this->view->showResult("Error al buscar las reviews", 500);
         }
     }
 
