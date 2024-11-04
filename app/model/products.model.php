@@ -5,33 +5,30 @@ class ProductsModel extends modelAbstract{
     public function __construct(){
         parent::__construct();    
     }
-    public function getProducts($orderBy, $order, $filter_id= null, $filter_name = null, $filter_price = null, $filter_description = null, $filter_img = null) {
+    public function getProducts($orderBy, $order, $name = null, $price = null, $description = null, $img = null) {
         $sql = "SELECT * FROM product";
         $params = [];
         $conditions = []; 
        
-        if ($filter_id != null) {
-            $conditions[] = 'id = ?';
-            $params[] = "$filter_id";
-        }
-        if ($filter_name != null) {
+       
+        if ($name != null) {
             $conditions[] = 'name LIKE ?';
-            $params[] = "%" . $filter_name . "%";
+            $params[] = "%" . $name . "%";
         }
-        if ($filter_price != null) {
+        if ($price != null) {
             $conditions[] = 'price = ?';
-            $params[] = $filter_price;
+            $params[] = $price;
         }
-        if ($filter_description != null) {
+        if ($description != null) {
             $conditions[] = 'description LIKE ?';
-            $params[] = "%" . $filter_description . "%";
+            $params[] = "%" . $description . "%";
         }
-        if ($filter_img != null) {
-            if ($filter_img === null || $filter_img === " " || $filter_img === "null") {
+        if ($img != null) {
+            if ($img === null || $img === " " || $img === "null") {
                 $conditions[] = 'image_product IS NULL';
             } else {
             $conditions[] = 'image_product LIKE ?';
-            $params[] = "%".$filter_img . "%";
+            $params[] = "%".$img . "%";
         }
 
     }

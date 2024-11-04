@@ -16,10 +16,10 @@ class ReviewsController{
     {
         $order = 'asc';
         $orderBy = false;
-        $filter_name = null;
-        $filter_score = null;
-        $filter_coment = null;
-        $filter_reply = null;
+        $name = null;
+        $score = null;
+        $coment = null;
+        $reply = null;
         $orderValues = ['name', 'score','id_product'];
 
         if (isset($req->query->orderBy)) {
@@ -29,20 +29,20 @@ class ReviewsController{
             }
         }
 
-        if (isset($req->query->filter_name)) {
-            $filter_name = $req->query->filter_name;
+        if (isset($req->query->name)) {
+            $name = $req->query->name;
         }
 
-        if (isset($req->query->filter_score)) {
-            $filter_score = $req->query->filter_score;
+        if (isset($req->query->score)) {
+            $score = $req->query->score;
         }
 
-        if (isset($req->query->filter_coment)) {
-            $filter_coment = $req->query->filter_coment;
+        if (isset($req->query->coment)) {
+            $coment = $req->query->coment;
         }
 
-        if (isset($req->query->filter_reply)) {
-            $filter_reply = $req->query->filter_reply;
+        if (isset($req->query->reply)) {
+            $reply = $req->query->reply;
         }
         if(isset($req->query->order)){
             $order = $req->query->order;
@@ -51,7 +51,7 @@ class ReviewsController{
             }
         }
         try {
-            $reviews = $this->model->getReviews($orderBy, $order, $filter_name, $filter_score, $filter_coment, $filter_reply);
+            $reviews = $this->model->getReviews($orderBy, $order, $name, $score, $coment, $reply);
             if (empty($reviews)) {
                 return $this->view->showResult("Ninguna review coincide con lo buscado", 404);
             }

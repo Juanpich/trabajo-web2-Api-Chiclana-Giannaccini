@@ -17,37 +17,32 @@ class ProductsController
         $orderBy = false;
         $order = 'asc';
         $orderValues = ['name','price','id'];
-        $filterValues= ['filter_id', 'filter_name', 'filter_price', 'filter_description', 'filter_img'];
-        $filter_id=null;
-        $filter_name = null;
-        $filter_price = null;
-        $filter_description = null;
-        $filter_img = null;
+        $filterValues= ['name', 'price', 'description', 'img'];
+        $name= null;
+        $price = null;
+        $description = null;
+        $img = null;
         
-
-        if (isset($req->query->filter_id) && in_array('filter_id', $filterValues)) {
-        $filter_id = $req->query->filter_id;
-    }
         
-            if (isset($req->query->filter_name)) {
-                $filter_name = $req->query->filter_name;
+            if (isset($req->query->name) && in_array('name', $filterValues)) {
+                $name= $req->query->name;
             }
     
-            if (isset($req->query->filter_price)) {
-                $filter_price = $req->query->filter_price;
+            if (isset($req->query->price)&& in_array('price', $filterValues)) {
+                $price = $req->query->price;
             }
     
-            if (isset($req->query->filter_description)) {
-                $filter_description = $req->query->filter_description;
+            if (isset($req->query->$description)) {
+                $description = $req->query->$description;
             }
     
-            if (isset($req->query->filter_img)) {
-                $filter_img = $req->query->filter_img;
+            if (isset($req->query->img)) {
+                $img = $req->query->img;
                
             }
 
 
-
+//probando es la unica manera que me funciono para que si pongo mal el nombre del filtro de error
 /*foreach ($filterValues as $filter) {
     if (isset($req->query->$filter)) {
         // Asignar el valor correspondiente al filtro
@@ -57,7 +52,7 @@ class ProductsController
 
 // Validar que solo se estén usando filtros permitidos
 foreach ($req->query as $key => $value) {
-    if (strpos($key, 'filter_') === 0 && !in_array($key, $filterValues)) {
+    if (!in_array($key, $filterValues)) {
         return $this->view->showResult("El filtro '$key' no es válido. Error de sintaxis", 400);
     }
 }*/
@@ -75,7 +70,7 @@ foreach ($req->query as $key => $value) {
                 }
             }
             try {  
-            $products = $this->model->getProducts($orderBy,$order,$filter_id, $filter_name, $filter_price, $filter_description, $filter_img);
+            $products = $this->model->getProducts($orderBy,$order, $name, $price, $description, $img);
             if(!$products){
             return $this->view->showResult("Ningun producto coincide con lo buscado", 404);
         }
