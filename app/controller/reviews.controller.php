@@ -104,8 +104,33 @@ class ReviewsController{
         if(isset($req->body->reply)){
             $reply = $req->body->reply;
         }
-        $this->model->updateReview($id, $data, $reply);
+        $result = $this->model->updateReview($id, $data, $reply);
+        if(!$result){
+            return $this->view->showResult("Ocurrio un error al actualizar la review con id= $id", 500);
+        }
         $review = $this->model->getReview($id);
+        if(!$review){
+            return $this->view->showResult("Ocurrio un error al traer la review actualizada con id= $id", 404);
+        }
+        return $this->view->showResult($review, 200);
+    }
+    public function updateReplyReview($req, $res){
+        $id = $req->params->id;
+        if(!$this->model->checkIDExists($id)){
+            return $this->view->showResult("El id=".$id." de la review no existe", 404);
+        }
+        if(!isset($req->body->reply) || empty($req->body->reply)){
+            return $this->view->showResult("Complete la reply para continuar", 400);
+        }
+        $reply = $req->body->reply;
+        $result = $this->model->updateReplyReview($id, $reply);
+        if(!$result){
+            return $this->view->showResult("Ocurrio un error al actualizar la reply de la review con id= $id", 500);
+        }
+        $review = $this->model->getReview($id);
+        if(!$review){
+            return $this->view->showResult("Ocurrio un error al traer la review actualizada con id= $id", 404);
+        }
         return $this->view->showResult($review, 200);
     }
 
@@ -131,6 +156,17 @@ class ReviewsController{
     }
         $review = $this->model->getReview($id);
         return $this->view->showResult($review, 200);
+    }
+    public function deleteReview($req, $res){
+        $id =$req->params->id;
+        if(!$this->model->checkIDExists($id)){
+            return $this->view->showResult("La review con id=".$id." no existe", 404);
+        }
+        $result = $this->model->eraseReview($id);
+        if($result)
+            return $this->view->showResult("La review con id=".$id." se elimino con exito", 200);
+        else
+            return $this->view->showResult("La review con id=".$id." no se pudo eliminar", 500);
     }
    
     }

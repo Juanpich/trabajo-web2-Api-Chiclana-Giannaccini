@@ -10,24 +10,24 @@ class OrdersModel extends modelAbstract{
         $params = [];
         $conditions = []; 
         if ($filter_total != null) {
-            $conditions[] = 'total = :total';
-            $params[':total'] = $filter_total;
+            $conditions[] = 'total = ?';
+            $params[] = $filter_total;
         }
         if ($filter_cant_products != null) {
-            $conditions[] = 'cant_products = :cant_products';
-            $params[':cant_products'] = $filter_cant_products;
+            $conditions[] = 'cant_products = ?';
+            $params[] = $filter_cant_products;
         }
         if ($filter_date != null) {
-            $conditions[] = 'date = :date';
-            $params[':date'] = $filter_date;
+            $conditions[] = 'date = ?';
+            $params[] = $filter_date;
         }
         if ($filter_total_greater != null) {
-            $conditions[] = 'total > :total_greater';
-            $params[':total_greater'] = $filter_total_greater;
+            $conditions[] = 'total > ?';
+            $params[] = $filter_total_greater;
         }
         if ($filter_total_minor != null) {
-            $conditions[] = 'total < :total_minor';
-            $params[':total_minor'] = $filter_total_minor;
+            $conditions[] = 'total < ?';
+            $params[] = $filter_total_minor;
         }
         if (count($conditions) > 0) {
             $sql .= ' WHERE ' . implode(' AND ', $conditions);
@@ -64,14 +64,14 @@ class OrdersModel extends modelAbstract{
     }
     public function checkIDExists($id){
         $query = $this->db->prepare("SELECT * FROM orders WHERE id = ?");
-        $result = $query->execute([$id]);
+        $query->execute([$id]);
         return $query->fetchColumn() > 0;
     }
     
     public function updateOrder($id, $data){
         $query = $this->db->prepare("UPDATE orders SET id_product = ?, cant_products = ?, total = ?, date = ? WHERE  orders . id = ?");
-        $query->execute([$data["id_product"], $data["cant_products"],  $data["total"], $data["date"], $id]);
-        return;
+        $result = $query->execute([$data["id_product"], $data["cant_products"],  $data["total"], $data["date"], $id]);
+        return $result;
     }
     public function eraseOrder($id){
         $query = $this->db->prepare("DELETE FROM orders WHERE id = ?");

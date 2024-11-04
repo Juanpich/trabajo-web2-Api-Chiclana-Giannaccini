@@ -67,8 +67,13 @@ class ReviewsModel extends modelAbstract
     }
     public function updateReview($id, $data, $reply){
         $query = $this->db->prepare("UPDATE review SET id_product = ?, client_name = ?, score = ?, coment = ?, reply = ? WHERE review . id = ?");
-        $query->execute([$data['id_product'], $data['client_name'], $data['score'], $data['coment'], $reply, intval($id)]);
-        return;
+        $result = $query->execute([$data['id_product'], $data['client_name'], $data['score'], $data['coment'], $reply, intval($id)]);
+        return $result;
+    }
+    public function updateReplyReview($id, $reply){
+        $query = $this->db->prepare("UPDATE review SET reply = ? WHERE review . id = ?");
+        $result = $query->execute([$reply, intval($id)]);
+        return $result;
     }
     public function getReview($id) {    
         $query = $this->db->prepare('SELECT * FROM review WHERE id = ?');
@@ -81,6 +86,11 @@ class ReviewsModel extends modelAbstract
         $query->execute([$data['id_product'], $data['client_name'], $data['score'], $data['coment']]);
         $id = $this->db->lastInsertId();
         return $id;
+    }
+    public function eraseReview($id){
+        $query = $this->db->prepare("DELETE FROM review WHERE id = ?");
+        $result = $query->execute([$id]);
+        return $result;
     }
    
 }

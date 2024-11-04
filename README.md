@@ -22,6 +22,30 @@ contraseña: admin
 Metodo GET: /trabajo-web2-Api-Chiclana-Giannaccini/api/reviews 
 Se puede implementar el orden mediante las siguentes maneras: orderBy=score, orderBy=name, orderBy=id_product, por defecto ordena por id.
 Se puede eleguir el orden: order=desc ó order=asc, por defecto ordena de forma asc.
+Metodo GET: /trabajo-web2-Api-Chiclana-Giannaccini/api/reviews/:id
+Metodo DELETE: /trabajo-web2-Api-Chiclana-Giannaccini/api/reviews/:id
+Metodo PUT: /trabajo-web2-Api-Chiclana-Giannaccini/api/reviews/:id
+Los campos que se pueden modificar son:
+    {
+        "id_product": ...
+        "client_name": ...,
+        "score": ..,
+        "coment": ...,
+        "reply" : ...
+    }
+Metodo PUT: /trabajo-web2-Api-Chiclana-Giannaccini/api/reviews/:id/reply
+Solo modifica el campo reply
+    {
+        "reply":...
+    }
+Metodo POST: /trabajo-web2-Api-Chiclana-Giannaccini/api/reviews 
+Se pueden crear los campos
+    {
+        "id_product": ...
+        "client_name": ...,
+        "score": ..,
+        "coment": ...,
+    }
 
 **Nota:** 
 >Tabla orders
@@ -40,11 +64,11 @@ Metodo DELETE: /trabajo-web2-Api-Chiclana-Giannaccini/api/orders/:id
 Metodo PUT: /trabajo-web2-Api-Chiclana-Giannaccini/api/orders/:id
 Metodo POST /trabajo-web2-Api-Chiclana-Giannaccini/api/orders
 Los campos que se pueden modificar o agregar son:
- {
-    "id_product": ..,
-    "cant_products": ..,
-    "date": "yyyy-mm-dd"
-}
+    {
+        "id_product": ..,
+        "cant_products": ..,
+        "date": "yyyy-mm-dd"
+    }
 
 **Nota:** 
 >Tabla products

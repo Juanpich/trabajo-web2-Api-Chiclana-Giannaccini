@@ -107,8 +107,14 @@ class OrdersControlers{
         if($data === null){
             return;
         }
-        $this->model->updateOrder($id, $data);
+        $result = $this->model->updateOrder($id, $data);
+        if(!$result){
+            return $this->view->showResult("Ocurrio un error al actualizar la orden con id= $id ", 500);
+        }
         $order = $this->model->getOrder($id);
+        if(!$order){
+            return $this->view->showResult("Error al traer la orden actualizada", 404);
+        }
         return $this->view->showResult($order,200);
     }
     public function createOrder($req, $res){
@@ -121,6 +127,9 @@ class OrdersControlers{
             return $this->view->showResult("La orden no se pudo crear", 500);
         }
         $order = $this->model->getOrder($last_id);
+        if(!$order){
+            return $this->view->showResult("Error al traer la orden creada", 404);
+        }
         return  $this->view->showResult($order, 201);
     }
 }
