@@ -5,28 +5,37 @@ class ProductsModel extends modelAbstract{
     public function __construct(){
         parent::__construct();    
     }
-    public function getProducts($orderBy, $filter_name = null, $filter_price = null, $filter_description = null, $filter_img = null) {
+    public function getProducts($orderBy, $order, $filter_id= null, $filter_name = null, $filter_price = null, $filter_description = null, $filter_img = null) {
         $sql = "SELECT * FROM product";
         $params = [];
-        $conditions = []; //para hacer mas de una consulta
+        $conditions = []; 
        
+        if ($filter_id != null) {
+            $conditions[] = 'id = ?';
+            $params[] = "$filter_id";
+        }
         if ($filter_name != null) {
-            $conditions[] = 'name LIKE :name';
-            $params[':name'] = "%" . $filter_name . "%";
+            $conditions[] = 'name LIKE ?';
+            $params[] = "%" . $filter_name . "%";
         }
         if ($filter_price != null) {
-            $conditions[] = 'price = :price';
-            $params[':price'] = $filter_price;
+            $conditions[] = 'price = ?';
+            $params[] = $filter_price;
         }
         if ($filter_description != null) {
-            $conditions[] = 'description LIKE :description';
-            $params[':description'] = "%" . $filter_description . "%";
+            $conditions[] = 'description LIKE ?';
+            $params[] = "%" . $filter_description . "%";
         }
         if ($filter_img != null) {
-            $conditions[] = 'img = :img';
-            $params[':img'] = $filter_img;
+            if ($filter_img === null || $filter_img === " " || $filter_img === "null") {
+                $conditions[] = 'image_product IS NULL';
+            } else {
+            $conditions[] = 'image_product LIKE ?';
+            $params[] = "%".$filter_img . "%";
         }
-        //para poder hacer mas de una consulta
+
+    }
+
         if (count($conditions) > 0) {
             $sql .= ' WHERE ' . implode(' AND ', $conditions);
         }
@@ -42,6 +51,13 @@ class ProductsModel extends modelAbstract{
                     $sql .= " ORDER BY id";
                     break;
             }
+        }else{
+            $sql .= " ORDER BY id";
+        }
+        if($order === 'desc'){
+            $sql .= " DESC";
+        }else if($order === 'asc'){
+            $sql .= " ASC";
         }
         $query = $this->db->prepare($sql);
         $query->execute($params);
