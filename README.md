@@ -15,6 +15,12 @@ Y una segunda tabla llamada orders, que se relaciona con la tabla producto a tra
 - Para poder realizar las modificaciones en las tablas se debe iniciar sesion, para ello el usuario registrado es:
 usuario: webadmin
 contraseña: admin
+# Pautas para el uso de la api: 
+Para hacer uso de la api debe utilizarse la aplicacion POSTMAN, la cual puede descargarse de esta direccion: https://www.postman.com/downloads/ (debe descargarse al equipo si va a utilizarse en local, es decir desde la propia maquina),
+o puede descargarse una extension en visual studio llamada Thunder Client y usarse desde ahi mismo.
+Para ingresar informacion para agregar o modificar con POST o PUT puede hacerse agregando los datos a ingresar desde el apartado: body- raw y con el formato JSON, pasando la informaion como un objeto:  ej:
+
+![alt text](image-1.png)  
 # A continuacion quedan cargados los endpoint para las diferentes tablas
 **Nota:** 
 >Tabla reviews
@@ -22,6 +28,11 @@ contraseña: admin
 Metodo GET: /trabajo-web2-Api-Chiclana-Giannaccini/api/reviews 
 Se puede implementar el orden mediante las siguentes maneras: orderBy=score, orderBy=name, orderBy=id_product, por defecto ordena por id.
 Se puede eleguir el orden: order=desc ó order=asc, por defecto ordena de forma asc.
+Filtros: 
+         filter_name = filtra por nombre;  
+         filter_score = filtra por puntaje;  
+         filter_word = filtra por palabra en las reseñas;  
+         filter_reply = filtra por palabra en la las respuestas;
 Metodo GET: /trabajo-web2-Api-Chiclana-Giannaccini/api/reviews/:id
 Metodo DELETE: /trabajo-web2-Api-Chiclana-Giannaccini/api/reviews/:id
 Metodo PUT: /trabajo-web2-Api-Chiclana-Giannaccini/api/reviews/:id
@@ -71,7 +82,28 @@ Los campos que se pueden modificar o agregar son:
     }
 
 **Nota:** 
->Tabla products
+>Tabla products  
+  
+Metodo GET: /trabajo-web2-Api-Chiclana-Giannaccini/api/products
+Se puede implementar el orden mediante las siguentes maneras: orderBy=name, orderBy=price, orderBy=id, por defecto ordena por id.
+Se puede eleguir el orden: order=desc ó order=asc, por defecto ordena de forma asc.  
+Se puede filtrar de las siguientes maneras:   
+- name = (name =)   =>  aqui se tiene en cuenta que la palabra este contenida en el nombre  
+- price= (price =)  
+- description = (description = ) => aqui se tiene en cuenta que la palabra este contenida en la descripcion  
+- img = (img = )  => aqui se tiene en cuenta que la palabra este contenida en la url de la imagen, tambien busca por null    
+Metodo GET: /trabajo-web2-Api-Chiclana-Giannaccini/api/products/:id  
+Metodo DELETE: /trabajo-web2-Api-Chiclana-Giannaccini/api/products/:id  
+Metodo PUT: /trabajo-web2-Api-Chiclana-Giannaccini/api/products/:id  
+Metodo POST /trabajo-web2-Api-Chiclana-Giannaccini/api/products  
+Los campos que se pueden modificar o agregar son: 
+ {  
+        "name": "...",  
+        "price": ..,  
+        "description": "..",  
+        "image_product": ".."   (este campo puede no estar presente y se setea como null)  
+}  
+
 
 # endpoint   
 **Nota:**   
