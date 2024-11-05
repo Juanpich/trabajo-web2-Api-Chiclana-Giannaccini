@@ -15,31 +15,62 @@ class ProductsController
 
     public function getProducts($req, $res){
         $orderBy = false;
-        $filter_name = null;
-        $filter_price = null;
-        $filter_description = null;
-        $filter_img = null;
+        $order = 'asc';
+        $orderValues = ['name','price','id'];
+        $filterValues= ['name', 'price', 'description', 'img'];
+        $name= null;
+        $price = null;
+        $description = null;
+        $img = null;
+        
+        
+            if (isset($req->query->name) && in_array('name', $filterValues)) {
+                $name= $req->query->name;
+            }
+    
+            if (isset($req->query->price)&& in_array('price', $filterValues)) {
+                $price = $req->query->price;
+            }
+    
+            if (isset($req->query->$description)) {
+                $description = $req->query->$description;
+            }
+    
+            if (isset($req->query->img)) {
+                $img = $req->query->img;
+               
+            }
 
-        if(isset($req->query->orderBy)){
-            $orderBy = $req->query->orderBy;
-        }
-            if (isset($req->query->filter_name)) {
-                $filter_name = $req->query->filter_name;
+
+//probando es la unica manera que me funciono para que si pongo mal el nombre del filtro de error
+/*foreach ($filterValues as $filter) {
+    if (isset($req->query->$filter)) {
+        // Asignar el valor correspondiente al filtro
+        ${$filter} = $req->query->$filter;
+    }
+}
+
+// Validar que solo se estén usando filtros permitidos
+foreach ($req->query as $key => $value) {
+    if (!in_array($key, $filterValues)) {
+        return $this->view->showResult("El filtro '$key' no es válido. Error de sintaxis", 400);
+    }
+}*/
+
+            if(isset($req->query->orderBy)){
+                $orderBy = $req->query->orderBy;
+                if(!in_array($orderBy, $orderValues)){
+                    return $this->view->showResult("No se puede ordenar por el campo ingresado. Error de sintaxis", 400);
+                }
             }
-    
-            if (isset($req->query->filter_price)) {
-                $filter_price = $req->query->filter_price;
+            if(isset($req->query->order)){
+                $order = $req->query->order;
+                if($order !== 'asc' && $order !== 'desc'){
+                    return $this->view->showResult("No se puede ordenar de esa forma, ingrese asc o desc", 400);
+                }
             }
-    
-            if (isset($req->query->filter_description)) {
-                $filter_description = $req->query->filter_description;
-            }
-    
-            if (isset($req->query->filter_img)) {
-                $filter_img = $req->query->filter_img;
-            }
-            try {
-            $products = $this->model->getProducts($orderBy, $filter_name, $filter_price, $filter_description, $filter_img);
+            try {  
+            $products = $this->model->getProducts($orderBy,$order, $name, $price, $description, $img);
             if(!$products){
             return $this->view->showResult("Ningun producto coincide con lo buscado", 404);
         }
@@ -47,6 +78,7 @@ class ProductsController
     }   catch (Exception $e) {
         return $this->view->showResult("Error al buscar los productos", 500);
     }
+
     }
 
     public function getProduct($req, $res){
@@ -109,14 +141,15 @@ class ProductsController
         $price=$req->body->price;
         $description=$req->body->description;
         $image_product = null;
-        if (isset($req->body->img_product)) {
-            $image_product = htmlspecialchars($req->body->img_product);
+        if (isset($req->body->image_product) && $req->body->image_product !== '') {
+            $image_product = htmlspecialchars($req->body->image_product);
         }
+
         $data= [
             'name' => htmlspecialchars($name),
             'price' => htmlspecialchars($price),
             'description' => htmlspecialchars($description),
-            'image_product' => htmlspecialchars($image_product) 
+            'image_product' => $image_product
         ];
         return $data;
     }

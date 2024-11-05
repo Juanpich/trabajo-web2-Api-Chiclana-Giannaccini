@@ -5,31 +5,30 @@ class ReviewsModel extends modelAbstract
     {
         parent::__construct();
     }
-    public function getReviews($orderBy, $order, $filter_name = null, $filter_score = null, $filter_coment = null, $filter_reply = null)
+    public function getReviews($orderBy, $order, $name = null, $score = null, $coment = null, $reply = null)
     {
         $sql = "SELECT * FROM review";
         $params = [];
         $conditions = [];  
         
         
-        if ($filter_name != null) {
+        if ($name != null) {
             $conditions[] = 'client_name LIKE ?';
-            $params[] = "%" . $filter_name . "%";  
+            $params[] = "%" . $name . "%";  
         }
-        if ($filter_score != null) {
+        if ($score != null) {
             $conditions[] = 'score = ?';
-            $params[] = $filter_score;
+            $params[] = $score;
         }
-        if ($filter_coment != null) {
+        if ($coment != null) {
             $conditions[] = 'coment LIKE ?';
-            $params[] = "%" . $filter_coment . "%";
+            $params[] = "%" . $coment . "%";
         }
-        if ($filter_reply != null) {
+        if ($reply != null) {
             $conditions[] = 'reply LIKE ?';
-            $params[] = "%" . $filter_reply . "%";
+            $params[] = "%" . $reply . "%";
         }
         
-        // Construcción de la cláusula WHERE
         if (count($conditions) > 0) {
             $sql .= ' WHERE ' . implode(' AND ', $conditions);
         }

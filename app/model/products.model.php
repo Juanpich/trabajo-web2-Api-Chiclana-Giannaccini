@@ -5,28 +5,34 @@ class ProductsModel extends modelAbstract{
     public function __construct(){
         parent::__construct();    
     }
-    public function getProducts($orderBy, $filter_name = null, $filter_price = null, $filter_description = null, $filter_img = null) {
+    public function getProducts($orderBy, $order, $name = null, $price = null, $description = null, $img = null) {
         $sql = "SELECT * FROM product";
         $params = [];
-        $conditions = []; //para hacer mas de una consulta
+        $conditions = []; 
        
-        if ($filter_name != null) {
-            $conditions[] = 'name LIKE :name';
-            $params[':name'] = "%" . $filter_name . "%";
+       
+        if ($name != null) {
+            $conditions[] = 'name LIKE ?';
+            $params[] = "%" . $name . "%";
         }
-        if ($filter_price != null) {
-            $conditions[] = 'price = :price';
-            $params[':price'] = $filter_price;
+        if ($price != null) {
+            $conditions[] = 'price = ?';
+            $params[] = $price;
         }
-        if ($filter_description != null) {
-            $conditions[] = 'description LIKE :description';
-            $params[':description'] = "%" . $filter_description . "%";
+        if ($description != null) {
+            $conditions[] = 'description LIKE ?';
+            $params[] = "%" . $description . "%";
         }
-        if ($filter_img != null) {
-            $conditions[] = 'img = :img';
-            $params[':img'] = $filter_img;
+        if ($img != null) {
+            if ($img === null || $img === " " || $img === "null") {
+                $conditions[] = 'image_product IS NULL';
+            } else {
+            $conditions[] = 'image_product LIKE ?';
+            $params[] = "%".$img . "%";
         }
-        //para poder hacer mas de una consulta
+
+    }
+
         if (count($conditions) > 0) {
             $sql .= ' WHERE ' . implode(' AND ', $conditions);
         }
@@ -42,6 +48,13 @@ class ProductsModel extends modelAbstract{
                     $sql .= " ORDER BY id";
                     break;
             }
+        }else{
+            $sql .= " ORDER BY id";
+        }
+        if($order === 'desc'){
+            $sql .= " DESC";
+        }else if($order === 'asc'){
+            $sql .= " ASC";
         }
         $query = $this->db->prepare($sql);
         $query->execute($params);
