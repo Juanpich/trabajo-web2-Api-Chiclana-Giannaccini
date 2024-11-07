@@ -57,7 +57,7 @@ class ProductsModel extends modelAbstract{
         }else if($order === 'asc'){
             $sql .= " ASC";
         }
-        //paginacion, el parsearlo evita inyeccion sql
+
         $sql .= " LIMIT " . (int)$offset . ", " . (int)$show;
 
         $query = $this->db->prepare($sql);
