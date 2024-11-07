@@ -120,16 +120,16 @@ show= ..&page=..
 **Nota:**   
 >Autenticacion  
    
-Para realizar algunas de las acciones en las diferentes tablas, hay que estar autorizado, para ello se debe autenticar ingresando los siguientes datos:  
+Para realizar algunas de las acciones en las diferentes tablas, hay que estar autorizado, para ello se deben ingresar los siguientes datos, para obtener el token de validacion, que luego usaremos para autenticarnos:  
 metodo GET: /trabajo-web2-Api-Chiclana-Giannaccini/api/user/token  
 user_name: webadmin   
-Password: admin  
-   
+Password: admin    
+
 Las acciones que van a requerir autorizacion son:  
 - Products: DELETE, PUT, POST  
 - Orders: DELETE, PUT, POST  
 - Reviews: PUT, DELETE  
 
-
+>Pasos a seguir para autenticar: En POSTMAN, en la pestaña Authorizacion/Auth Type/Basic Auth ingresamos los datos de usuario y contraseña. Esto nos va a dar un token que pondremos en Authorizacion/Auth Type/Bearer Token y asi quedar autorizados para las acciones que lo requieren
 
 
