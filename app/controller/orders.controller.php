@@ -13,26 +13,30 @@ class OrdersControlers{
     public function getOrders($req, $res){
         $orderBy = false;
         $order = 'asc';
-        $orderValues = ['cant_products', 'total','date'];
-        $filterValues = ['cant_products', 'total_greater','total_minor','total','date', 'orderBy', 'resource', 'page', 'show', 'order'];
+        $orderValues = ['cant_products', 'total','date','id_product'];
+        $filterValues = ['cant_products', 'total_greater','total_minor','total','date', 'orderBy', 'resource', 'page', 'show', 'order', 'id_product'];
+        $id_product =null;
         $total = null;
         $cant_products = null;
         $date = null;
         $total_greater = null;
         $total_minor = null;
+        if(isset($req->query->id_product)){
+            $id_product = $req->query->id_product;
+        }
         if(isset($req->query->total)){
             $total = $req->query->total;
         }
-        if(isset($req->query->cant_products) && in_array('cant_products', $filterValues)){
+        if(isset($req->query->cant_products)){
             $cant_products = $req->query->cant_products;
         }
-        if(isset($req->query->date) && in_array('date', $filterValues)){
+        if(isset($req->query->date)){
             $date = $req->query->date;
         }
-        if(isset($req->query->total_greater) && in_array('total_greater', $filterValues)){
+        if(isset($req->query->total_greater)){
             $total_greater = $req->query->total_greater;
         }
-        if(isset($req->query->total_minor) && in_array('total_minor', $filterValues)){
+        if(isset($req->query->total_minor)){
             $total_minor = $req->query->total_minor;
         }
         if(isset($req->query->orderBy)){
@@ -52,7 +56,7 @@ class OrdersControlers{
                 return $this->view->showResult("El parametro '$key' no es válido. Error de sintaxis", 400);
             }
         }
-        $orders = $this->model->getOrders($orderBy, $order, $total,$cant_products,$date,$total_greater,$total_minor);
+        $orders = $this->model->getOrders($orderBy, $order, $total,$cant_products,$date,$total_greater,$total_minor, $id_product);
         if(!$orders){
             return $this->view->showResult("Las ordenes no se pudieron conseguir", 404);
         }

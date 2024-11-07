@@ -5,7 +5,7 @@ class OrdersModel extends modelAbstract{
     public function __construct(){
         parent::__construct();   
     }
-    public function getOrders($orderBy, $order, $total,$cant_products,$date,$total_greater,$total_minor){
+    public function getOrders($orderBy, $order, $total,$cant_products,$date,$total_greater,$total_minor,$id_product){
         $sql = "SELECT * FROM orders";
         $params = [];
         $conditions = []; 
@@ -29,6 +29,10 @@ class OrdersModel extends modelAbstract{
             $conditions[] = 'total < ?';
             $params[] = $total_minor;
         }
+        if ($id_product != null) {
+            $conditions[] = 'id_product = ?';
+            $params[] = $id_product;
+        }
         if (count($conditions) > 0) {
             $sql .= ' WHERE ' . implode(' AND ', $conditions);
         }
@@ -43,6 +47,9 @@ class OrdersModel extends modelAbstract{
                 case "cant_products":
                     $sql .= " ORDER BY cant_products";
                     break;
+                case "id_product":
+                    $sql .=  " ORDER BY id_product" ;
+                    break;  
             }
         }else{
             $sql .= " ORDER BY id";

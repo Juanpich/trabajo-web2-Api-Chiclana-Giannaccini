@@ -61,9 +61,10 @@ Se pueden crear los campos
 >Tabla orders  
   
 Metodo GET: /trabajo-web2-Api-Chiclana-Giannaccini/api/orders  
-Se puede implementar el orden mediante las siguentes maneras: orderBy=date, orderBy=total,  orderBy=cant_products, por defecto ordena por id.  
+Se puede implementar el orden mediante las siguentes maneras: orderBy=date, orderBy=total,  orderBy=cant_products, orderBy=id=product, por defecto ordena por id.  
 Se puede eleguir el orden: order=desc ó order=asc, por defecto ordena de forma asc.  
 Se puede filtrar de las siguientes maneras:   
+-id_product=(id del producto)  
 -total = (total =)
 -cant_products=(cantidad =)
 -date = (fecha = "yyyy-mm-dd")
