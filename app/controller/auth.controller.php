@@ -2,6 +2,7 @@
 require_once './app/model/auth.model.php';
 require_once './app/view/view.php';
 require_once './app/model/abstract.model.php';
+require_once './libs/jwt.php';
 class AuthController {
     private $model;
     private $view;
@@ -11,36 +12,29 @@ class AuthController {
         $this->view = new view();
     }
 
-    public function showLogin() {
-        return $this->view->showLogin();
-    }
-
-    public function login() {
-        
-        if (!isset($_POST['user_name']) || empty($_POST['user_name'])) {
-            return $this->view->showLogin('Falta completar el nombre de usuario');
+    public function getToken() {
+        // obtengo el email y la contraseña desde el header
+        $auth_header = $_SERVER['HTTP_AUTHORIZATION']; // "Basic dXN1YXJpbw=="
+        $auth_header = explode(' ', $auth_header); // ["Basic", "dXN1YXJpbw=="]
+        if(count($auth_header) != 2) {
+            return $this->view->showResult("Error en los datos ingresados", 400);
         }
-        if (!isset($_POST['password']) || empty($_POST['password'])) {
-            return $this->view->showLogin('Falta completar la contraseña');
+        if($auth_header[0] != 'Basic') {
+            return $this->view->showResult("Error en los datos ingresados", 400);
         }
-        $user_name = $_POST['user_name'];
-        $password = $_POST['password'];
-
-        $userFromDB = $this->model->getUserByUserNsme($user_name);
-        if($userFromDB && password_verify($password, $userFromDB->password)){
-            session_start();
-            $_SESSION['ID_USER'] = $userFromDB->id;
-            $_SESSION['NAME_USER'] = $userFromDB->user_name;
-            header('Location: ' . BASE_URL);
-        } else {
-            return $this->view->showLogin('El usuario y/o contraseña no coinciden');
+        $user_pass = base64_decode($auth_header[1]); // "webadmin:admin"
+        $user_pass = explode(':', $user_pass); // ["webadmin", "admin"]
+        // Buscamos El usuario en la base
+        $user = $this->model->getUserByUserName($user_pass[0]);
+        // Chequeamos la contraseña
+        if($user == null || !password_verify($user_pass[1], $user->password)) {
+            return $this->view->showResult("Error en los datos ingresados", 400);
         }
-    }
-
-    public function logout()
-    {
-        session_start(); 
-        session_destroy(); 
-        header("Location: " . BASE_URL . "home");
+        // Generamos el token
+        $token = createJWT(array(
+            'sub' => $user->id,
+            'user_name' => $user->user_name,
+        ));
+        return $this->view->showResult($token);
     }
 }

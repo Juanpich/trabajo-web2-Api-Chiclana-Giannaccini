@@ -17,11 +17,13 @@ class ProductsController
         $orderBy = false;
         $order = 'asc';
         $orderValues = ['name','price','id'];
-        $filterValues= ['name', 'price', 'description', 'img'];
+        $filterValues= ['name', 'price', 'description', 'img', 'resource', 'orderBy', 'page', 'show', 'order'];
         $name= null;
         $price = null;
         $description = null;
         $img = null;
+        $page=1;
+        $show=100;
         
         
             if (isset($req->query->name) && in_array('name', $filterValues)) {
@@ -32,30 +34,20 @@ class ProductsController
                 $price = $req->query->price;
             }
     
-            if (isset($req->query->$description)) {
+            if (isset($req->query->$description)&& in_array('description', $filterValues)) {
                 $description = $req->query->$description;
             }
     
-            if (isset($req->query->img)) {
+            if (isset($req->query->img)&& in_array('img', $filterValues)) {
                 $img = $req->query->img;
                
             }
 
-
-//probando es la unica manera que me funciono para que si pongo mal el nombre del filtro de error
-/*foreach ($filterValues as $filter) {
-    if (isset($req->query->$filter)) {
-        // Asignar el valor correspondiente al filtro
-        ${$filter} = $req->query->$filter;
-    }
-}
-
-// Validar que solo se estén usando filtros permitidos
-foreach ($req->query as $key => $value) {
-    if (!in_array($key, $filterValues)) {
-        return $this->view->showResult("El filtro '$key' no es válido. Error de sintaxis", 400);
-    }
-}*/
+            foreach ($req->query as $key => $value) {
+                if (!in_array($key, $filterValues)) {
+                    return $this->view->showResult("El filtro '$key' no es válido. Error de sintaxis", 400);
+                }
+            }
 
             if(isset($req->query->orderBy)){
                 $orderBy = $req->query->orderBy;
@@ -69,8 +61,16 @@ foreach ($req->query as $key => $value) {
                     return $this->view->showResult("No se puede ordenar de esa forma, ingrese asc o desc", 400);
                 }
             }
+            if (isset($req->query->page)) {
+                $page = $req->query->page; 
+            }
+            if (isset($req->query->show)) {
+                $show = $req->query->show; 
+            }
+            
+            $offset = ($page - 1) * $show;
             try {  
-            $products = $this->model->getProducts($orderBy,$order, $name, $price, $description, $img);
+            $products = $this->model->getProducts($orderBy,$order, $name, $price, $description, $img, $show, $offset);
             if(!$products){
             return $this->view->showResult("Ningun producto coincide con lo buscado", 404);
         }
@@ -80,7 +80,6 @@ foreach ($req->query as $key => $value) {
     }
 
     }
-
     public function getProduct($req, $res){
         $id= $req->params->id;
         if(!$this->model->checkIDExists($id)){
@@ -92,6 +91,9 @@ foreach ($req->query as $key => $value) {
     }
 
     public function deleteProduct($req, $res){
+        if(!$res->user) {
+            return $this->view->showResult("No autorizado", 401);
+        }
         $id =$req->params->id;
         if(!$this->model->checkIDExists($id)){
             return $this->view->showResult("El producto con id=".$id." no existe", 404);
@@ -104,6 +106,9 @@ foreach ($req->query as $key => $value) {
     }
 
     public function createProduct($req, $res){
+        if(!$res->user) {
+            return $this->view->showResult("No autorizado", 401);
+        }
         $data = $this->getValidatedProductData($req);
         if($data === null){
             return;
@@ -118,6 +123,9 @@ foreach ($req->query as $key => $value) {
 
     
     public function updateProduct($req, $res){
+        if(!$res->user) {
+            return $this->view->showResult("No autorizado", 401);
+        }
         $id= $req->params->id;
         if(!$this->model->checkIDExists($id)){
             return $this->view->showResult("El producto con id=".$id." no existe", 404);

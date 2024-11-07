@@ -5,7 +5,7 @@ class UserModel extends modelAbstract {
        parent::__construct();
     }
  
-    public function getUserByUserNsme($user_name) {    
+    public function getUserByUserName($user_name) {    
         $query = $this->db->prepare("SELECT * FROM user WHERE user_name = ?");
         $query->execute([$user_name]);
     

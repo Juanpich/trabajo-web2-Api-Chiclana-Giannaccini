@@ -6,8 +6,6 @@ require_once './app/model/products.model.php';
 class OrdersControlers{
     private $view;
     private $model;
-    private $error;
-  
     public function __construct(){
         $this->view = new view();
         $this->model = new OrdersModel();
@@ -16,25 +14,26 @@ class OrdersControlers{
         $orderBy = false;
         $order = 'asc';
         $orderValues = ['cant_products', 'total','date'];
-        $filter_total = null;
-        $filter_cant_products = null;
-        $filter_date = null;
-        $filter_total_greater = null;
-        $filter_total_minor = null;
-        if(isset($req->query->filter_total)){
-            $filter_total = $req->query->filter_total;
+        $filterValues = ['cant_products', 'total_greater','total_minor','total','date', 'orderBy', 'resource', 'page', 'show', 'order'];
+        $total = null;
+        $cant_products = null;
+        $date = null;
+        $total_greater = null;
+        $total_minor = null;
+        if(isset($req->query->total)){
+            $total = $req->query->total;
         }
-        if(isset($req->query->filter_cant_products)){
-            $filter_cant_products = $req->query->filter_cant_products;
+        if(isset($req->query->cant_products) && in_array('cant_products', $filterValues)){
+            $cant_products = $req->query->cant_products;
         }
-        if(isset($req->query->filter_date)){
-            $filter_date = $req->query->filter_date;
+        if(isset($req->query->date) && in_array('date', $filterValues)){
+            $date = $req->query->date;
         }
-        if(isset($req->query->filter_total_greater)){
-            $filter_total_greater = $req->query->filter_total_greater;
+        if(isset($req->query->total_greater) && in_array('total_greater', $filterValues)){
+            $total_greater = $req->query->total_greater;
         }
-        if(isset($req->query->filter_total_minor)){
-            $filter_total_minor = $req->query->filter_total_minor;
+        if(isset($req->query->total_minor) && in_array('total_minor', $filterValues)){
+            $total_minor = $req->query->total_minor;
         }
         if(isset($req->query->orderBy)){
             $orderBy = $req->query->orderBy;
@@ -48,9 +47,37 @@ class OrdersControlers{
                 return $this->view->showResult("No se puede ordenar de esa forma, ingrese asc o desc", 400);
             }
         }
-        $orders = $this->model->getOrders($orderBy, $order, $filter_total,$filter_cant_products,$filter_date,$filter_total_greater,$filter_total_minor);
+        foreach ($req->query as $key => $value) {
+            if (!in_array($key, $filterValues)) {
+                return $this->view->showResult("El parametro '$key' no es válido. Error de sintaxis", 400);
+            }
+        }
+        $orders = $this->model->getOrders($orderBy, $order, $total,$cant_products,$date,$total_greater,$total_minor);
         if(!$orders){
             return $this->view->showResult("Las ordenes no se pudieron conseguir", 404);
+        }
+        //paginacion desde php
+        if(isset($req->query->show) && !empty($req->query->show) && isset($req->query->page) && !empty($req->query->page)){
+            $lim= count($orders);
+            $see = $req->query->show;
+            if($see <= 0 ){
+                return $this->view->showResult("Ingrese numeros validos show > 0 y show <= $lim ", 400);
+            }
+            $pag = $req->query->page;
+            if(($lim/$see) <= 1 && intval($pag)!==1){
+                return $this->view->showResult("Unico numero valido para page 1", 400);
+            }
+            if($see <= 1 && intval($pag > $lim)){
+                return $this->view->showResult("Ingrese numeros para page entre 1 y $lim ", 400);
+            }
+            if($pag <= 0 || $pag > ceil($lim/$see)){
+                return $this->view->showResult("Ingrese numeros validos page > 0 y page <= " . ceil(($lim/$see)) , 400);
+            }
+            $num = $see * $pag;    
+            for ($i=$num-$see; $i < $num && $i < $lim ; $i++) { 
+               $pageOrders[] = $orders[$i];
+            }
+            return $this->view->showResult($pageOrders, 200);
         }
         return $this->view->showResult($orders, 200);
     }
@@ -64,6 +91,9 @@ class OrdersControlers{
        
     }
     public function deleteOrder($req, $res){
+        if(!$res->user) {
+            return $this->view->showResult("No autorizado", 401);
+        }
         $id =$req->params->id;
         if(!$this->model->checkIDExists($id)){
             return $this->view->showResult("La orden con id=".$id." no existe", 404);
@@ -99,6 +129,9 @@ class OrdersControlers{
         return $data;
     }
     public function updateOrder($req, $res){
+        if(!$res->user) {
+            return $this->view->showResult("No autorizado", 401);
+        }
         $id= $req->params->id;
         if(!$this->model->checkIDExists($id)){
             return $this->view->showResult("La orden con id=".$id." no existe", 404);
@@ -118,6 +151,9 @@ class OrdersControlers{
         return $this->view->showResult($order,200);
     }
     public function createOrder($req, $res){
+        if(!$res->user) {
+            return $this->view->showResult("No autorizado", 401);
+        }
         $data = $this->checkFormData($req);
         if($data === null){
             return;

@@ -5,7 +5,8 @@ class ProductsModel extends modelAbstract{
     public function __construct(){
         parent::__construct();    
     }
-    public function getProducts($orderBy, $order, $name = null, $price = null, $description = null, $img = null) {
+    public function getProducts($orderBy, $order, $name = null, $price = null, $description = null, 
+    $img = null, $show = 100, $offset = 0) {
         $sql = "SELECT * FROM product";
         $params = [];
         $conditions = []; 
@@ -56,9 +57,15 @@ class ProductsModel extends modelAbstract{
         }else if($order === 'asc'){
             $sql .= " ASC";
         }
+        //paginacion, el parsearlo evita inyeccion sql
+        $sql .= " LIMIT " . (int)$offset . ", " . (int)$show;
+
         $query = $this->db->prepare($sql);
         $query->execute($params);
-        return $query->fetchAll(PDO::FETCH_OBJ);
+      
+        $products=$query->fetchAll(PDO::FETCH_OBJ);
+       
+        return $products;
     }
     public function getProduct($id) {
         $query = $this->db->prepare("SELECT * FROM product WHERE id = ?");

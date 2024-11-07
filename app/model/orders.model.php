@@ -5,29 +5,29 @@ class OrdersModel extends modelAbstract{
     public function __construct(){
         parent::__construct();   
     }
-    public function getOrders($orderBy, $order, $filter_total,$filter_cant_products,$filter_date,$filter_total_greater,$filter_total_minor){
+    public function getOrders($orderBy, $order, $total,$cant_products,$date,$total_greater,$total_minor){
         $sql = "SELECT * FROM orders";
         $params = [];
         $conditions = []; 
-        if ($filter_total != null) {
+        if ($total != null) {
             $conditions[] = 'total = ?';
-            $params[] = $filter_total;
+            $params[] = $total;
         }
-        if ($filter_cant_products != null) {
+        if ($cant_products != null) {
             $conditions[] = 'cant_products = ?';
-            $params[] = $filter_cant_products;
+            $params[] = $cant_products;
         }
-        if ($filter_date != null) {
+        if ($date != null) {
             $conditions[] = 'date = ?';
-            $params[] = $filter_date;
+            $params[] = $date;
         }
-        if ($filter_total_greater != null) {
+        if ($total_greater != null) {
             $conditions[] = 'total > ?';
-            $params[] = $filter_total_greater;
+            $params[] = $total_greater;
         }
-        if ($filter_total_minor != null) {
+        if ($total_minor != null) {
             $conditions[] = 'total < ?';
-            $params[] = $filter_total_minor;
+            $params[] = $total_minor;
         }
         if (count($conditions) > 0) {
             $sql .= ' WHERE ' . implode(' AND ', $conditions);
@@ -84,8 +84,11 @@ class OrdersModel extends modelAbstract{
         $id = $this->db->lastInsertId();
         return $id;
     }
-
-    
-    
+    public function countOrders(){
+        $query = $this->db->prepare("SELECT COUNT(*) AS total_records FROM orders");
+        $result = $query->execute();
+        $query = $query->fetch(PDO::FETCH_OBJ);
+        return $query->total_records;
+    }
 }
 

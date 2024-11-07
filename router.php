@@ -3,8 +3,12 @@ require_once './libs/router.php';
 require_once './app/controller/products.controller.php';
 require_once './app/controller/orders.controller.php';
 require_once './app/controller/reviews.controller.php';
+require_once './app/controller/auth.controller.php';
+require_once './app/middleware/jwt.auth.middleware.php';
 
 $router = new Router();
+
+$router->addMiddleware(new JWTAuthMiddleware());
  #                 endpoint                    verbo     controller             metodo
 //reviews 
 $router->addRoute('reviews'  ,                 'GET',    'ReviewsController',   'getReviews');
@@ -25,5 +29,9 @@ $router->addRoute('products/:id'  ,             'GET',    'ProductsController', 
 $router->addRoute('products'  ,                 'POST',   'ProductsController',    'createProduct');
 $router->addRoute('products/:id'  ,             'PUT',    'ProductsController',    'updateProduct');
 $router->addRoute('products/:id'  ,             'DELETE', 'ProductsController',    'deleteProduct');
+//TOKEN
+$router->addRoute('user/token'  ,            'GET',    'AuthController',   'getToken');
+//ruta default
+$router->setDefaultRoute('ReviewsController', 'getReviews');
 
 $router->route($_GET['resource'], $_SERVER['REQUEST_METHOD']);

@@ -10,8 +10,7 @@ Y una segunda tabla llamada orders, que se relaciona con la tabla producto a tra
 # Pautas para el despliegue de la web:
 - Tener instalado xampp y encendido Apache y MySQL.
 - Clonar el repositorio en la carpeta xampp/htdocs.
-- Crear la base de datos con el nombre pedidos_today (las tablas se crean automaticamente por la implementacion del auto Deploy), o se puede importar la base de datos completa desde phpMyAdmin, el archivo llamado db/pedidos_today.sql 
-- Luego en el browser, ingresar al localhost y dirigirse a la carpeta donde se guardo el repositorio, y de esta forma la pagina se carga y se visualiza.
+- La base de datos completa se crea automaticamente por la implementacion del auto Deploy, o se puede importar la base de datos completa desde phpMyAdmin, el archivo llamado db/pedidos_today.sql 
 - Para poder realizar las modificaciones en las tablas se debe iniciar sesion, para ello el usuario registrado es:
 usuario: webadmin
 contraseña: admin
@@ -28,65 +27,65 @@ Para ingresar informacion para agregar o modificar con POST o PUT puede hacerse 
 Metodo GET: /trabajo-web2-Api-Chiclana-Giannaccini/api/reviews 
 Se puede implementar el orden mediante las siguentes maneras: orderBy=score, orderBy=name, orderBy=id_product, por defecto ordena por id.
 Se puede eleguir el orden: order=desc ó order=asc, por defecto ordena de forma asc.
-Filtros: 
-         filter_name = filtra por nombre;  
-         filter_score = filtra por puntaje;  
-         filter_word = filtra por palabra en las reseñas;  
-         filter_reply = filtra por palabra en la las respuestas;
-Metodo GET: /trabajo-web2-Api-Chiclana-Giannaccini/api/reviews/:id
-Metodo DELETE: /trabajo-web2-Api-Chiclana-Giannaccini/api/reviews/:id
-Metodo PUT: /trabajo-web2-Api-Chiclana-Giannaccini/api/reviews/:id
-Los campos que se pueden modificar son:
-    {
-        "id_product": ...
-        "client_name": ...,
-        "score": ..,
-        "coment": ...,
-        "reply" : ...
-    }
-Metodo PUT: /trabajo-web2-Api-Chiclana-Giannaccini/api/reviews/:id/reply
-Solo modifica el campo reply
-    {
-        "reply":...
-    }
-Metodo POST: /trabajo-web2-Api-Chiclana-Giannaccini/api/reviews 
-Se pueden crear los campos
-    {
-        "id_product": ...
-        "client_name": ...,
-        "score": ..,
-        "coment": ...,
-    }
-
-**Nota:** 
->Tabla orders
-
-Metodo GET: /trabajo-web2-Api-Chiclana-Giannaccini/api/orders
-Se puede implementar el orden mediante las siguentes maneras: orderBy=date, orderBy=total, orderBy=cant_products, por defecto ordena por id.
-Se puede eleguir el orden: order=desc ó order=asc, por defecto ordena de forma asc.
-Se puede filtrar de las siguientes maneras: 
--filter_total = (total =)
--filter_cant_products=(cantidad =)
--filter_date = (fecha = "yyyy-mm-dd")
--filter_total_greater = (total >) 
--filter_total_minor =(total <)
-Metodo GET: /trabajo-web2-Api-Chiclana-Giannaccini/api/orders/:id
-Metodo DELETE: /trabajo-web2-Api-Chiclana-Giannaccini/api/orders/:id
-Metodo PUT: /trabajo-web2-Api-Chiclana-Giannaccini/api/orders/:id
-Metodo POST /trabajo-web2-Api-Chiclana-Giannaccini/api/orders
-Los campos que se pueden modificar o agregar son:
-    {
-        "id_product": ..,
-        "cant_products": ..,
-        "date": "yyyy-mm-dd"
-    }
-
-**Nota:** 
->Tabla products  
+Filtros:   
+         name = filtra por nombre;  
+         score = filtra por puntaje;  
+         coment = filtra por palabra en las reseñas;  
+         reply = filtra por palabra en la las respuestas;
+Metodo GET: /trabajo-web2-Api-Chiclana-Giannaccini/api/reviews/:id  
+Metodo DELETE: /trabajo-web2-Api-Chiclana-Giannaccini/api/reviews/:id  
+Metodo PUT: /trabajo-web2-Api-Chiclana-Giannaccini/api/reviews/:id  
+Los campos que se pueden modificar son:  
+    {  
+        "id_product": ...,       
+        "client_name": ...,  
+        "score": ..,  
+        "coment": ...,  
+        "reply" : ...  
+    }  
+Metodo PUT: /trabajo-web2-Api-Chiclana-Giannaccini/api/reviews/:id/reply  
+Solo modifica el campo reply   
+    {  
+        "reply":...  
+    }  
+Metodo POST: /trabajo-web2-Api-Chiclana-Giannaccini/api/reviews   
+Se pueden crear los campos  
+    {  
+        "id_product": ...,  
+        "client_name": ...,  
+        "score": ..,  
+        "coment": ...,  
+    }  
   
-Metodo GET: /trabajo-web2-Api-Chiclana-Giannaccini/api/products
-Se puede implementar el orden mediante las siguentes maneras: orderBy=name, orderBy=price, orderBy=id, por defecto ordena por id.
+**Nota:**   
+>Tabla orders  
+  
+Metodo GET: /trabajo-web2-Api-Chiclana-Giannaccini/api/orders  
+Se puede implementar el orden mediante las siguentes maneras: orderBy=date, orderBy=total,  orderBy=cant_products, por defecto ordena por id.  
 Se puede eleguir el orden: order=desc ó order=asc, por defecto ordena de forma asc.  
+Se puede filtrar de las siguientes maneras:   
+-total = (total =)
+-cant_products=(cantidad =)
+-date = (fecha = "yyyy-mm-dd")
+-total_greater = (total >) 
+-total_minor =(total <)
+Metodo GET: /trabajo-web2-Api-Chiclana-Giannaccini/api/orders/:id  
+Metodo DELETE: /trabajo-web2-Api-Chiclana-Giannaccini/api/orders/:id  
+Metodo PUT: /trabajo-web2-Api-Chiclana-Giannaccini/api/orders/:id  
+Metodo POST /trabajo-web2-Api-Chiclana-Giannaccini/api/orders  
+Los campos que se pueden modificar o agregar son:  
+    {  
+        "id_product": ..,  
+        "cant_products": ..,  
+        "date": "yyyy-mm-dd"  
+    }  
+  
+**Nota:**   
+>Tabla products    
+    
+Metodo GET: /trabajo-web2-Api-Chiclana-Giannaccini/api/products  
+Se puede implementar el orden mediante las siguentes maneras: orderBy=name, orderBy=price, orderBy=id, por defecto ordena por id.  
+Se puede eleguir el orden: order=desc ó order=asc, por defecto ordena de forma asc.    
 Se puede filtrar de las siguientes maneras:   
 - name = (name =)   =>  aqui se tiene en cuenta que la palabra este contenida en el nombre  
 - price= (price =)  
@@ -95,7 +94,7 @@ Se puede filtrar de las siguientes maneras:
 Metodo GET: /trabajo-web2-Api-Chiclana-Giannaccini/api/products/:id  
 Metodo DELETE: /trabajo-web2-Api-Chiclana-Giannaccini/api/products/:id  
 Metodo PUT: /trabajo-web2-Api-Chiclana-Giannaccini/api/products/:id  
-Metodo POST /trabajo-web2-Api-Chiclana-Giannaccini/api/products  
+Metodo POST: /trabajo-web2-Api-Chiclana-Giannaccini/api/products  
 Los campos que se pueden modificar o agregar son: 
  {  
         "name": "...",  
@@ -104,15 +103,17 @@ Los campos que se pueden modificar o agregar son:
         "image_product": ".."   (este campo puede no estar presente y se setea como null)  
 }  
 
-
-# endpoint   
 **Nota:**   
->/trabajo-web2-Api-Chiclana-Giannaccini/api/reviews?orderBy=score  
-> Ej filtrar por dos campos: http://localhost/.../api/reviews?filter_reply=gracias&filter_name=juan  
+>Paginación 
+En cualquier tabla de la pagina se puede realizar paginacion (Al momento de mostrar todos), para esto se deben utilizar los parametros:
+show= ..&page=..
 
-Filtros: orderBy = ordena;  
-         filter_name = filtra por nombre;  
-         filter_score = filtra por puntaje;  
-         filter_word = filtra por palabra en las reseñas;  
-         filter_reply = filtra por palabra en la las respuestas;
-
+**Nota:**   
+>Autenticacion  
+Web para probar TOKEN:
+https://jwt.io/
+  
+metodo GET: /trabajo-web2-Api-Chiclana-Giannaccini/api/users/token  
+  ![alt text](image-2.png)  
+user_name: webadmin   
+Password: admin  

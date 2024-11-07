@@ -21,7 +21,7 @@ class ReviewsController{
         $coment = null;
         $reply = null;
         $orderValues = ['name', 'score','id_product'];
-
+        $filterValues = ['name', 'score', 'coment', 'reply', 'order', 'orderBy', 'page', 'show', 'resource'];
         if (isset($req->query->orderBy)) {
             $orderBy = $req->query->orderBy;
             if(!in_array($orderBy, $orderValues)){
@@ -50,8 +50,38 @@ class ReviewsController{
                 return $this->view->showResult("No se puede ordenar de esa forma, ingrese asc o desc", 400);
             }
         }
+
+        foreach ($req->query as $key => $value) {
+            if (!in_array($key, $filterValues)) {
+                return $this->view->showResult("El parametro '$key' no es válido. Error de sintaxis", 400);
+            }
+
+        }
+        
         try {
             $reviews = $this->model->getReviews($orderBy, $order, $name, $score, $coment, $reply);
+            if(isset($req->query->show) && !empty($req->query->show) && isset($req->query->page) && !empty($req->query->page)){
+                $lim= count($reviews);
+                $show = $req->query->show;
+                if($show <= 0 ){
+                    return $this->view->showResult("Ingrese numeros validos show > 0 y show <= $lim ", 400);
+                }
+                $pag = $req->query->page;
+                if(($lim/$show) <= 1 && intval($pag)!==1){
+                    return $this->view->showResult("Unico numero valido para page 1", 400);
+                }
+                if($show <= 1 && intval($pag > $lim)){
+                    return $this->view->showResult("Ingrese numeros para page entre 1 y $lim ", 400);
+                }
+                if($pag <= 0 || $pag > ceil($lim/$show)){
+                    return $this->view->showResult("Ingrese numeros validos page > 0 y page <= " . ceil(($lim/$show)) , 400);
+                }
+                $num = $show * $pag;    
+                for ($i=$num-$show; $i < $num && $i < $lim ; $i++) { 
+                   $reviewsPage[] = $reviews[$i];
+                }
+                return $this->view->showResult($reviewsPage, 200);
+            }
             if (empty($reviews)) {
                 return $this->view->showResult("Ninguna review coincide con lo buscado", 404);
             }
@@ -92,6 +122,9 @@ class ReviewsController{
 
 
     public function updateReview($req, $res){
+        if(!$res->user) {
+            return $this->view->showResult("No autorizado", 401);
+        }
         $id = $req->params->id;
         if(!$this->model->checkIDExists($id)){
             return $this->view->showResult("El id=".$id." de la review no existe", 404);
@@ -115,6 +148,9 @@ class ReviewsController{
         return $this->view->showResult($review, 200);
     }
     public function updateReplyReview($req, $res){
+        if(!$res->user) {
+            return $this->view->showResult("No autorizado", 401);
+        }
         $id = $req->params->id;
         if(!$this->model->checkIDExists($id)){
             return $this->view->showResult("El id=".$id." de la review no existe", 404);
@@ -158,6 +194,9 @@ class ReviewsController{
         return $this->view->showResult($review, 200);
     }
     public function deleteReview($req, $res){
+        if(!$res->user) {
+            return $this->view->showResult("No autorizado", 401);
+        }
         $id =$req->params->id;
         if(!$this->model->checkIDExists($id)){
             return $this->view->showResult("La review con id=".$id." no existe", 404);
