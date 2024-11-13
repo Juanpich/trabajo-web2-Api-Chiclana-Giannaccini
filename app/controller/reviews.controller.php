@@ -207,8 +207,10 @@ class ReviewsController{
         else
             return $this->view->showResult("La review con id=".$id." no se pudo eliminar", 500);
     }
-   
+    public function pageNotFound($req, $res){
+        $this->view->showResult("Pagina no encontrada, error en la sintaxis", 404);
     }
+}
     
 
 

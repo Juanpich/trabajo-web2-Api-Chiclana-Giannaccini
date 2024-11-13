@@ -32,6 +32,6 @@ $router->addRoute('products/:id'  ,             'DELETE', 'ProductsController', 
 //TOKEN
 $router->addRoute('user/token'  ,            'GET',    'AuthController',   'getToken');
 //ruta default
-$router->setDefaultRoute('ReviewsController', 'getReviews');
+$router->setDefaultRoute('ReviewsController', 'pageNotFound');
 
 $router->route($_GET['resource'], $_SERVER['REQUEST_METHOD']);

@@ -37,8 +37,10 @@
         if($signature != $valid_signature) {
             return null;
         }
-
         $payload = base64_decode($payload);
         $payload = json_decode($payload);
+        if($payload->exp < time()) {
+            return null;
+        }
         return $payload;
     }

@@ -34,6 +34,7 @@ class AuthController {
         $token = createJWT(array(
             'sub' => $user->id,
             'user_name' => $user->user_name,
+            'exp'=> time() + 3600
         ));
         return $this->view->showResult($token);
     }

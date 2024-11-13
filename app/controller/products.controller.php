@@ -6,7 +6,6 @@ class ProductsController
 {
     private $view;
     private $model;
-   
     public function __construct()
     {
         $this->view = new view();
@@ -40,7 +39,6 @@ class ProductsController
     
             if (isset($req->query->img)&& in_array('img', $filterValues)) {
                 $img = $req->query->img;
-               
             }
 
             foreach ($req->query as $key => $value) {
